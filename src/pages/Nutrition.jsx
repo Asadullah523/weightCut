@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { Utensils, Zap, Plus, Flame, Check, AlertTriangle, Lightbulb, Apple, TrendingDown, Droplet } from 'lucide-react';
 import { HIGH_PROTEIN_FOODS, RECOVERY_TIPS, FOODS_TO_AVOID, COMMON_MEALS, WEIGHT_LOSS_TIPS } from '../data/nutrition';
+import FoodSearch from '../components/FoodSearch';
 
 const Nutrition = () => {
   const { user, nutritionLogs, logNutrition } = useApp();
@@ -46,6 +47,9 @@ const Nutrition = () => {
           Fuel your body right. Track macros and make smart food choices.
         </p>
       </div>
+
+      {/* AI Food Search */}
+      <FoodSearch />
 
       {/* Stats Cards */}
       <div style={{ 
