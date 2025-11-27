@@ -1,0 +1,561 @@
+export const WORKOUT_SCHEDULE = [
+    { day: 'Monday', title: 'Chest + Triceps + Cardio', id: 'mon', focus: ['Chest', 'Triceps', 'Cardio'] },
+    { day: 'Tuesday', title: 'Back + Biceps + Cardio', id: 'tue', focus: ['Back', 'Biceps', 'Cardio'] },
+    { day: 'Wednesday', title: 'Legs + Shoulders + Cardio', id: 'wed', focus: ['Legs', 'Shoulders', 'Cardio'] },
+    { day: 'Thursday', title: 'Chest + Triceps + Cardio', id: 'thu', focus: ['Chest', 'Triceps', 'Cardio'] },
+    { day: 'Friday', title: 'Back + Biceps + Cardio', id: 'fri', focus: ['Back', 'Biceps', 'Cardio'] },
+    { day: 'Saturday', title: 'Legs + Abs + Cardio', id: 'sat', focus: ['Legs', 'Abs', 'Cardio'] },
+    { day: 'Sunday', title: 'REST DAY', id: 'sun', focus: ['Rest'] }
+];
+
+export const CARDIO_PLAN = {
+    weeks1_2: {
+        title: 'Weeks 1-2: Steady State',
+        details: '25 min treadmill + 25 min other cardio (elliptical/bike) at moderate intensity (6-7 km/h, 2-3% incline)'
+    },
+    weeks3_4: {
+        title: 'Weeks 3-4: Mixed Intervals',
+        details: '25 min Steady State + 25 min Intervals (1 min fast, 2 min slow)'
+    },
+    weeks5_6: {
+        title: 'Weeks 5-6: HIIT + Steady',
+        details: '30 min HIIT (30 sec sprint, 90 sec recovery) + 20 min Steady State'
+    }
+};
+
+export const EXERCISES = {
+    Chest: [
+        {
+            name: 'Barbell Bench Press',
+            sets: 4, reps: '10-12', rest: '90s',
+            image: '/assets/bench_press_illustration_1763936559519.png',
+            instructions: [
+                'Lie back on a flat bench. Using a medium width grip (a grip that creates a 90-degree angle in the middle of the movement), lift the bar from the rack and hold it straight over you with your arms locked.',
+                'From the starting position, breathe in and begin coming down slowly until the bar touches your middle chest.',
+                'After a brief pause, push the bar back to the starting position as you breathe out. Focus on pushing the bar using your chest muscles.',
+                'Lock your arms and squeeze your chest in the contracted position at the top of the motion, hold for a second and then start coming down slowly again.'
+            ]
+        },
+        {
+            name: 'Incline Dumbbell Press',
+            sets: 3, reps: '10-12', rest: '75s',
+            image: '/assets/incline_dumbbell_press_1763936904160.png',
+            instructions: [
+                'Lie back on an incline bench with a dumbbell in each hand atop your thighs. The palms of your hands will be facing each other.',
+                'Then, using your thighs to help you get the dumbbells up, lift the dumbbells one at a time so that you can hold them at shoulder width.',
+                'Once at shoulder width, rotate your wrists forward so that the palms of your hands are facing away from you. This will be your starting position.',
+                'Be sure to keep full control of the dumbbells at all times. Then breathe out and push the dumbbells up with your chest.',
+                'Lock your arms at the top, hold for a second, and then start slowly lowering the weight.'
+            ]
+        },
+        {
+            name: 'Cable Chest Flyes',
+            sets: 3, reps: '12-15', rest: '60s',
+            image: '/assets/sliced/ex_03.jpg',
+            instructions: [
+                'Place the pulleys on a high position (above your head), select the resistance to be used and hold the pulleys in each hand.',
+                'Step forward in front of an imaginary straight line between both pulleys while pulling your arms together in front of you. Your torso should have a small forward inclination from the waist.',
+                'With a slight bend on your elbows in order to prevent stress at the biceps tendon, extend your arms to the side (straight out at both sides) in a wide arc until you feel a stretch on your chest.',
+                'Return your arms back to the starting position as you breathe out. Make sure to use the same arc of motion used to lower the weights.'
+            ]
+        },
+        {
+            name: 'Dips (Chest Focus)',
+            sets: 3, reps: '8-12', rest: '75s',
+            image: '/assets/sliced/ex_04.jpg',
+            instructions: [
+                'For this exercise you will need access to parallel bars. To get yourself into the starting position, hold your body at arm\'s length (arms locked) above the bars.',
+                'While breathing in, lower yourself slowly with your torso leaning forward around 30 degrees or so and your elbows flared out slightly until you feel a slight stretch in the chest.',
+                'Once you feel the stretch, use your chest to bring your body back to the starting position as you breathe out.',
+                'Tip: If you lean forward, you hit your chest. If you hold yourself straight, you hit your triceps.'
+            ]
+        }
+    ],
+    Triceps: [
+        {
+            name: 'Tricep Rope Pushdowns',
+            sets: 3, reps: '12-15', rest: '60s',
+            image: '/assets/sliced/ex_05.jpg',
+            instructions: [
+                'Attach a rope attachment to a high pulley and grab with a neutral grip (palms facing each other).',
+                'Standing upright with the torso straight and a very small inclination forward, bring the upper arms close to your body and perpendicular to the floor.',
+                'Using the triceps, bring the rope down as you bring each side of the rope to the side of your thighs. At the end of the movement the arms are fully extended and perpendicular to the floor.',
+                'Hold for a second and slowly bring the rope up to the starting point. Breathe in as you perform this step.'
+            ]
+        },
+        {
+            name: 'Overhead Tricep Extension',
+            sets: 3, reps: '10-12', rest: '60s',
+            image: '/assets/sliced/ex_06.jpg',
+            instructions: [
+                'Sit on a bench with back support. Hold a dumbbell with both hands and extend your arms over your head.',
+                'Slowly lower the weight behind your head as you hold the upper arms stationary and close to your head.',
+                'Pause when your triceps are fully stretched, and then return to the starting position by extending your arms.'
+            ]
+        },
+        {
+            name: 'Close Grip Bench Press',
+            sets: 3, reps: '10-12', rest: '75s',
+            image: '/assets/bench_press_illustration_1763936559519.png',
+            instructions: [
+                'Lie back on a flat bench. Using a close grip (around shoulder width), lift the bar from the rack and hold it straight over you with your arms locked.',
+                'As you breathe in, come down slowly until you feel the bar on your middle chest.',
+                'Tip: Make sure that - unlike a regular bench press - you keep the elbows close to the torso at all times in order to maximize triceps involvement.',
+                'Push the bar back to the starting position as you breathe out and push the bar using your triceps muscles.'
+            ]
+        },
+        {
+            name: 'Tricep Dips',
+            sets: 3, reps: '10-15', rest: '60s',
+            image: '/assets/sliced/ex_04.jpg', // Reusing Dips image
+            instructions: [
+                'Hold your body at arm\'s length with your arms locked above the parallel bars.',
+                'Keep your torso upright (unlike the chest version) and your elbows close to the body.',
+                'Lower yourself until your forearm and upper arm form a 90-degree angle.',
+                'Push yourself back up to the starting position using your triceps.'
+            ]
+        }
+    ],
+    Back: [
+        {
+            name: 'Deadlifts',
+            sets: 4, reps: '8-10', rest: '120s',
+            image: '/assets/deadlift_illustration_1763936572131.png',
+            instructions: [
+                'Stand with feet hip-width apart, toes pointed slightly outward. The barbell should be over the middle of your feet.',
+                'Bend at the hips to grip the bar. Your hands should be just outside your knees.',
+                'Keep your back flat and chest up. Drive through your heels to lift the bar, keeping it close to your legs.',
+                'Stand up tall, squeezing your glutes at the top. Do not lean back.',
+                'Lower the bar back to the ground with control, hinging at the hips.'
+            ]
+        },
+        {
+            name: 'Pull-ups/Lat Pulldown',
+            sets: 4, reps: '8-12', rest: '90s',
+            image: '/assets/sliced/ex_09.jpg',
+            instructions: [
+                'Grab the pull-up bar with the palms facing forward using the prescribed grip.',
+                'As you have both arms extended in front of you holding the bar, bring your torso back around 30 degrees or so while creating a curvature on your lower back and sticking your chest out.',
+                'Pull your torso up until the bar touches your upper chest by drawing the shoulders and the upper arms down and back.',
+                'Breathe out as you perform this portion of the movement. Tip: Concentrate on squeezing the back muscles once you reach the full contracted position.'
+            ]
+        },
+        {
+            name: 'Bent-Over Barbell Rows',
+            sets: 3, reps: '10-12', rest: '75s',
+            image: '/assets/sliced/ex_10.jpg',
+            instructions: [
+                'Holding a barbell with a pronated grip (palms facing down), bend your knees slightly and bring your torso forward, by bending at the waist, while keeping the back straight until it is almost parallel to the floor.',
+                'Tip: Make sure that you keep the head up. The barbell should hang directly in front of you as your arms hang perpendicular to the floor and your torso.',
+                'While keeping the torso stationary, breathe out and lift the barbell to you. Keep the elbows close to the body.',
+                'At the top contracted position, squeeze the back muscles and hold for a brief pause.'
+            ]
+        },
+        {
+            name: 'Seated Cable Rows',
+            sets: 3, reps: '10-12', rest: '75s',
+            image: '/assets/sliced/ex_11.jpg',
+            instructions: [
+                'For this exercise you will need access to a low pulley row machine with a V-bar.',
+                'Sit down on the machine and place your feet on the front platform or crossbar provided making sure that your knees are slightly bent and not locked.',
+                'Lean over as you keep the natural alignment of your back and grab the V-bar handles.',
+                'With your arms extended pull back until your torso is at a 90-degree angle from your legs. Your back should be slightly arched and your chest should be sticking out.',
+                'Pull the handles back towards your torso while keeping the arms close to it until you touch the abdominals.'
+            ]
+        }
+    ],
+    Biceps: [
+        {
+            name: 'Barbell Bicep Curls',
+            sets: 4, reps: '10-12', rest: '60s',
+            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            instructions: [
+                'Stand up with your torso upright while holding a barbell at a shoulder-width grip. The palm of your hands should be facing forward and the elbows should be close to the torso.',
+                'While holding the upper arms stationary, curl the weights forward while contracting the biceps as you breathe out.',
+                'Continue the movement until your biceps are fully contracted and the bar is at shoulder level.',
+                'Hold the contracted position for a second and squeeze the biceps hard.',
+                'Slowly begin to bring the bar back to starting position as your breathe in.'
+            ]
+        },
+        {
+            name: 'Hammer Curls',
+            sets: 3, reps: '10-12', rest: '60s',
+            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            instructions: [
+                'Stand up with your torso upright and a dumbbell on each hand being held at arms length. The elbows should be close to the torso.',
+                'The palms of the hands should be facing your torso. This will be your starting position.',
+                'Now, while holding your upper arm stationary, curl the weight forward while contracting the biceps as you breathe out.',
+                'Continue the movement until your biceps are fully contracted and the dumbbell is at shoulder level. Hold the contracted position for a second as you squeeze the biceps.'
+            ]
+        },
+        {
+            name: 'Cable Bicep Curls',
+            sets: 3, reps: '12-15', rest: '60s',
+            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            instructions: [
+                'Stand up with a straight torso while holding a cable curl bar that is attached to a low pulley. Grab the cable bar at shoulder width.',
+                'The elbows should be close to the torso and the palms of your hand should be facing forward.',
+                'While holding the upper arms stationary, curl the weights forward while contracting the biceps as you breathe out.',
+                'Only the forearms should move. Rise until your biceps are fully contracted and the bar is at shoulder level.'
+            ]
+        },
+        {
+            name: 'Concentration Curls',
+            sets: 3, reps: '10-12', rest: '60s',
+            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            instructions: [
+                'Sit down on a flat bench with one dumbbell in front of you between your legs.',
+                'Use your right arm to pick up the dumbbell. Place the back of your right upper arm on the top of your inner right thigh.',
+                'Rotate the palm of your hand until it is facing forward away from your thigh.',
+                'While holding the upper arm stationary, curl the weights forward while contracting the biceps as you breathe out.',
+                'Only the forearms should move. Continue the movement until your biceps are fully contracted and the dumbbells are at shoulder level.'
+            ]
+        }
+    ],
+    Legs: [
+        {
+            name: 'Barbell Back Squats',
+            sets: 4, reps: '10-12', rest: '120s',
+            image: '/assets/squat_illustration_1763936545702.png',
+            instructions: [
+                'Place the barbell on your upper back (traps), not your neck. Grip the bar firmly.',
+                'Stand with feet shoulder-width apart, toes pointed slightly out.',
+                'Keep your chest up and core tight. Break at the hips and knees simultaneously to lower yourself.',
+                'Go as deep as your mobility allows (ideally thighs parallel to floor).',
+                'Drive back up through your heels, keeping your knees in line with your toes.'
+            ]
+        },
+        {
+            name: 'Romanian Deadlifts',
+            sets: 3, reps: '10-12', rest: '90s',
+            image: '/assets/deadlift_illustration_1763936572131.png',
+            instructions: [
+                'Stand holding a barbell with an overhand grip. Feet hip-width apart.',
+                'Keep a slight bend in your knees but do not squat.',
+                'Hinge at your hips, pushing your butt back as far as possible while lowering the bar along your legs.',
+                'Keep your back flat. You should feel a deep stretch in your hamstrings.',
+                'Squeeze your glutes to return to the standing position.'
+            ]
+        },
+        {
+            name: 'Leg Press',
+            sets: 3, reps: '12-15', rest: '75s',
+            image: '/assets/sliced/ex_18.jpg',
+            instructions: [
+                'Sit on the machine and place your legs on the platform directly in front of you at a medium (shoulder width) foot stance.',
+                'Lower the safety bars holding the weighted platform in place and press the platform all the way up until your legs are fully extended in front of you.',
+                'Inhale as you slowly lower the platform until your upper and lower legs make a 90-degree angle.',
+                'Pushing mainly with the heels of your feet and using the quadriceps go back to the starting position as you exhale.'
+            ]
+        },
+        {
+            name: 'Leg Curls',
+            sets: 3, reps: '12-15', rest: '60s',
+            image: '/assets/sliced/ex_19.jpg',
+            instructions: [
+                'Adjust the machine lever to fit your height and lie face down on the leg curl machine with the pad of the lever on the back of your legs (just a few inches under the calves).',
+                'Keeping the torso flat on the bench, ensure your legs are fully stretched and grab the side handles of the machine.',
+                'Exhale and curl your legs up as far as possible without lifting the upper legs from the pad.',
+                'Hold for a second at the peak contraction and then slowly lower back to the starting position.'
+            ]
+        },
+        {
+            name: 'Walking Lunges',
+            sets: 3, reps: '12 each', rest: '60s', daySpecific: 'sat',
+            image: '/assets/sliced/ex_20.jpg',
+            instructions: [
+                'Stand with your feet together and your hands on your hips or holding dumbbells.',
+                'Step forward with one leg, flexing the knees to drop your hips.',
+                'Descend until your rear knee nearly touches the ground. Your posture should remain upright, and your front knee should stay above the front foot.',
+                'Drive through the heel of your lead foot and extend both knees to raise yourself back up.',
+                'Step forward with your rear foot, repeating the lunge on the opposite leg.'
+            ]
+        },
+        {
+            name: 'Leg Extensions',
+            sets: 3, reps: '12-15', rest: '60s', daySpecific: 'sat',
+            image: '/assets/sliced/ex_21.jpg',
+            instructions: [
+                'Sit on the leg extension machine with your legs under the pad (feet pointed forward) and the hands holding the side bars.',
+                'Using your quadriceps, extend your legs to the maximum as you exhale.',
+                'Ensure that the rest of the body remains stationary on the seat. Pause a second on the contracted position.',
+                'Slowly lower the weight back to the original position as you inhale, ensuring that you do not go past the 90-degree angle limit.'
+            ]
+        },
+        {
+            name: 'Standing Calf Raises',
+            sets: 4, reps: '15-20', rest: '60s', daySpecific: 'sat',
+            image: '/assets/sliced/ex_22.jpg',
+            instructions: [
+                'Stand on the edge of a step or calf machine block with the balls of your feet.',
+                'Let your heels drop down as far as possible to feel a deep stretch in your calves.',
+                'Raise your heels up as high as possible, squeezing your calves at the top.',
+                'Lower slowly and repeat.'
+            ]
+        }
+    ],
+    Shoulders: [
+        {
+            name: 'Dumbbell Shoulder Press',
+            sets: 4, reps: '10-12', rest: '75s',
+            image: '/assets/sliced/ex_23.jpg',
+            instructions: [
+                'Sit on a bench with back support. Hold a dumbbell in each hand at shoulder height.',
+                'Palms should face forward. Keep your core tight and back pressed against the bench.',
+                'Press the weights upward until your arms are fully extended overhead.',
+                'Lower the weights back down to shoulder height with control.'
+            ]
+        },
+        {
+            name: 'Lateral Raises',
+            sets: 3, reps: '12-15', rest: '60s',
+            image: '/assets/sliced/ex_24.jpg',
+            instructions: [
+                'Stand or sit with a dumbbell in each hand at your sides.',
+                'Keep a slight bend in your elbows. Raise your arms out to the sides until they are at shoulder level.',
+                'Think about leading with your elbows. Do not swing the weights.',
+                'Lower the weights back down slowly.'
+            ]
+        },
+        {
+            name: 'Front Raises',
+            sets: 3, reps: '12-15', rest: '60s',
+            image: '/assets/sliced/ex_25.jpg',
+            instructions: [
+                'Stand with a dumbbell in each hand in front of your thighs.',
+                'Raise the weights in front of you until your arms are parallel to the floor.',
+                'Pause for a moment at the top, then lower the weights back down with control.',
+                'Avoid rocking back and forth to lift the weight.'
+            ]
+        },
+        {
+            name: 'Face Pulls',
+            sets: 3, reps: '15-20', rest: '60s',
+            image: '/assets/sliced/ex_26.jpg',
+            instructions: [
+                'Set a rope attachment at upper chest height on a cable machine.',
+                'Grasp the handles with palms facing each other. Step back to create tension.',
+                'Pull the rope towards your face, separating your hands as you pull.',
+                'Think about pulling your hands to your ears and squeezing your shoulder blades together.',
+                'Return to the starting position with control.'
+            ]
+        }
+    ],
+    Abs: [
+        {
+            name: 'Cable Crunches',
+            sets: 3, reps: '15-20', rest: '45s',
+            image: '/assets/sliced/ex_27.jpg',
+            instructions: [
+                'Kneel below a high pulley with a rope attachment.',
+                'Grasp the rope and lower it until your hands are next to your face.',
+                'Flex your hips slightly and allow the weight to hyperextend the lower back.',
+                'With the hips stationary, flex the waist as you contract the abs so that the elbows travel towards the middle of the thighs.',
+                'Exhale as you perform this portion of the movement and hold the contraction for a second.'
+            ]
+        },
+        {
+            name: 'Hanging Leg Raises',
+            sets: 3, reps: '10-15', rest: '45s',
+            image: '/assets/sliced/ex_28.jpg',
+            instructions: [
+                'Hang from a chin-up bar with both arms extended at a wide grip.',
+                'The legs should be straight down with the pelvis rolled slightly backwards.',
+                'Raise your legs until the torso makes a 90-degree angle with the legs.',
+                'Exhale as you perform this movement and hold the contraction for a second or so.',
+                'Go back slowly to the starting position as you breathe in.'
+            ]
+        },
+        {
+            name: 'Planks',
+            sets: 3, reps: '45-60s', rest: '45s',
+            image: '/assets/sliced/ex_29.jpg',
+            instructions: [
+                'Get into a prone position on the floor, supporting your weight on your toes and your forearms.',
+                'Your arms should be bent and directly below the shoulders.',
+                'Keep your body straight at all times, and hold this position as long as possible.',
+                'To increase difficulty, an arm or leg can be raised.'
+            ]
+        },
+        {
+            name: 'Russian Twists',
+            sets: 3, reps: '20 each', rest: '45s',
+            image: '/assets/sliced/ex_30.jpg',
+            instructions: [
+                'Sit on the floor with your legs bent at the knees and your feet elevated slightly.',
+                'Lean back so your torso is at a 45-degree angle to the floor.',
+                'Hold your hands together in front of your chest (or hold a weight).',
+                'Twist your torso to the right, then to the left, tapping the floor on each side.',
+                'Keep your core engaged throughout the movement.'
+            ]
+        }
+    ],
+    'Fat Loss': [
+        {
+            name: 'Burpees',
+            sets: 3, reps: '15-20', rest: '60s',
+            image: '/assets/burpees_illustration_1763936533196.png',
+            instructions: [
+                'Stand with your feet shoulder-width apart.',
+                'Lower your body into a squat and place your hands on the floor in front of you.',
+                'Kick your feet back so that you are in a push-up position.',
+                'Lower your chest to do a push-up.',
+                'Kick your feet back to the squat position.',
+                'Stand up and jump into the air, clapping your hands overhead.'
+            ]
+        },
+        {
+            name: 'Mountain Climbers',
+            sets: 3, reps: '45s', rest: '45s',
+            image: '/assets/mountain_climbers_illustration_1763936585262.png',
+            instructions: [
+                'Start in a plank position with your hands directly under your shoulders.',
+                'Engage your core and bring your right knee toward your chest.',
+                'Quickly switch legs, bringing your left knee toward your chest while extending your right leg back.',
+                'Continue alternating legs at a fast pace, as if you are running in place.'
+            ]
+        },
+        {
+            name: 'Jump Rope',
+            sets: 5, reps: '1 min', rest: '30s',
+            image: '/assets/sliced/ex_22.jpg',
+            instructions: [
+                'Hold the rope handles with a firm grip, elbows close to your sides.',
+                'Swing the rope over your head and jump as it passes under your feet.',
+                'Stay on the balls of your feet and keep your jumps small and controlled.',
+                'Use your wrists to turn the rope, not your arms.'
+            ]
+        },
+        {
+            name: 'High Knees',
+            sets: 3, reps: '45s', rest: '45s',
+            image: '/assets/sliced/ex_20.jpg',
+            instructions: [
+                'Stand tall with your feet hip-width apart.',
+                'Run in place, bringing your knees up as high as possible towards your chest.',
+                'Pump your arms in rhythm with your legs.',
+                'Land softly on the balls of your feet.'
+            ]
+        },
+        {
+            name: 'Battle Ropes',
+            sets: 3, reps: '30s', rest: '60s',
+            image: '/assets/sliced/ex_05.jpg',
+            instructions: [
+                'Stand with feet shoulder-width apart, knees slightly bent.',
+                'Hold the ends of the ropes in each hand.',
+                'Raise and lower your arms in an alternating motion to create waves in the ropes.',
+                'Keep your core tight and maintain a steady rhythm.'
+            ]
+        },
+        {
+            name: 'Jump Squats',
+            sets: 4, reps: '12-15', rest: '60s',
+            image: '/assets/squat_illustration_1763936545702.png',
+            instructions: [
+                'Stand with feet shoulder-width apart, toes slightly out.',
+                'Lower into a squat position, keeping your chest up and core tight.',
+                'Explosively jump up, extending through your hips and knees.',
+                'Land softly back into the squat position and immediately repeat.',
+                'Focus on landing with control to protect your knees.'
+            ]
+        },
+        {
+            name: 'Box Jumps',
+            sets: 4, reps: '10-12', rest: '90s',
+            image: '/assets/sliced/ex_18.jpg',
+            instructions: [
+                'Stand facing a sturdy box or platform (start with 12-18 inches).',
+                'Bend your knees slightly and swing your arms back.',
+                'Explosively jump onto the box, swinging your arms forward for momentum.',
+                'Land softly with both feet on the box, knees slightly bent.',
+                'Step down carefully and repeat.'
+            ]
+        },
+        {
+            name: 'Kettlebell Swings',
+            sets: 4, reps: '15-20', rest: '60s',
+            image: '/assets/deadlift_illustration_1763936572131.png',
+            instructions: [
+                'Stand with feet wider than shoulder-width, kettlebell on the ground in front of you.',
+                'Hinge at the hips and grab the kettlebell with both hands.',
+                'Swing the kettlebell back between your legs, then explosively drive your hips forward.',
+                'Let the kettlebell swing up to chest height (arms straight).',
+                'Control the descent and repeat in a fluid motion.'
+            ]
+        },
+        {
+            name: 'Sprint Intervals',
+            sets: 6, reps: '30s sprint', rest: '90s walk',
+            image: '/assets/sliced/ex_20.jpg',
+            instructions: [
+                'Find a track, field, or treadmill for sprinting.',
+                'Warm up with 5 minutes of light jogging.',
+                'Sprint at 80-90% max effort for 30 seconds.',
+                'Walk or jog slowly for 90 seconds to recover.',
+                'Repeat for 6-8 rounds.',
+                'Cool down with 5 minutes of walking.'
+            ]
+        },
+        {
+            name: 'Bicycle Crunches',
+            sets: 3, reps: '20 each side', rest: '45s',
+            image: '/assets/sliced/ex_30.jpg',
+            instructions: [
+                'Lie on your back with hands behind your head, legs raised.',
+                'Bring your right elbow to your left knee while extending your right leg.',
+                'Switch sides, bringing your left elbow to your right knee.',
+                'Continue alternating in a smooth, controlled motion.',
+                'Focus on rotating your torso, not just your elbows.'
+            ]
+        },
+        {
+            name: 'Plank Jacks',
+            sets: 3, reps: '30s', rest: '45s',
+            image: '/assets/sliced/ex_29.jpg',
+            instructions: [
+                'Start in a plank position with your feet together.',
+                'Jump both feet out wide, like a jumping jack.',
+                'Quickly jump your feet back together.',
+                'Keep your core tight and hips stable throughout.',
+                'Maintain a straight line from head to heels.'
+            ]
+        },
+        {
+            name: 'Turkish Get-Ups',
+            sets: 3, reps: '5 each side', rest: '90s',
+            image: '/assets/sliced/ex_23.jpg',
+            instructions: [
+                'Lie on your back holding a kettlebell or dumbbell above you with one arm.',
+                'Bend the knee on the same side as the weight.',
+                'Roll onto your opposite elbow, then onto your hand.',
+                'Lift your hips and sweep your bottom leg back to a kneeling position.',
+                'Stand up while keeping the weight overhead.',
+                'Reverse the movement to return to lying position.'
+            ]
+        }
+    ]
+};
+
+export const getExercisesForDay = (dayId) => {
+    const day = WORKOUT_SCHEDULE.find(d => d.id === dayId);
+    if (!day || day.id === 'sun') return [];
+
+    let exercises = [];
+    day.focus.forEach(group => {
+        if (group === 'Cardio' || group === 'Rest') return;
+
+        // Filter out day-specific exercises if not the right day
+        // Also handle 'Fat Loss' if we ever add it to schedule, but currently it's just in gallery
+        if (EXERCISES[group]) {
+            const groupExercises = EXERCISES[group].filter(ex => !ex.daySpecific || ex.daySpecific === dayId);
+            exercises = [...exercises, ...groupExercises.map(ex => ({
+                ...ex,
+                group,
+                id: ex.name.replace(/\s+/g, '-').toLowerCase()
+            }))];
+        }
+    });
+
+    return exercises;
+};
