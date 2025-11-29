@@ -88,6 +88,23 @@ export const AppProvider = ({ children }) => {
     document.documentElement.setAttribute('data-theme', newTheme);
   };
 
+  const resetApp = () => {
+    // Clear all localStorage
+    localStorage.clear();
+    
+    // Reset all state to initial values
+    setUser(null);
+    setGoals(null);
+    setWeightLogs([]);
+    setWorkoutLogs({});
+    setMeasurements({});
+    setNutritionLogs({});
+    setSettings({ theme: 'light' });
+    
+    // Reset theme to light
+    document.documentElement.setAttribute('data-theme', 'light');
+  };
+
   const value = {
     user,
     goals,
@@ -103,7 +120,8 @@ export const AppProvider = ({ children }) => {
     updateWorkoutLog,
     logMeasurement,
     logNutrition,
-    toggleTheme
+    toggleTheme,
+    resetApp
   };
 
   return (

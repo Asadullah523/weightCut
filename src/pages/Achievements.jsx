@@ -118,7 +118,9 @@ const Achievements = () => {
       title: 'The Champion',
       description: 'Reach your target weight',
       icon: <Trophy size={32} />,
-      isUnlocked: currentWeight <= goals.targetWeight,
+      isUnlocked: goals.goalType === 'gain' 
+        ? currentWeight >= goals.targetWeight 
+        : currentWeight <= goals.targetWeight,
       progress: Math.min(100, progressPercent),
       color: '#14b8a6',
       gradient: 'linear-gradient(135deg, #14b8a6, #0891b2)'

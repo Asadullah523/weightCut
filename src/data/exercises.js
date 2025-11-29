@@ -71,8 +71,92 @@ export const WORKOUT_SCHEDULE = [
             'Planks'
         ]
     },
-    { day: 'Sunday', title: 'REST DAY', id: 'sun', focus: ['Rest'], exercises: [] }
+    { id: 'sun', day: 'Sunday', title: 'REST DAY', focus: 'Rest', exercises: [] }
 ];
+
+export const HYPERTROPHY_SCHEDULE = [
+    {
+        id: 'mon', day: 'Monday', focus: 'Push (Chest/Shoulders/Triceps)',
+        exercises: [
+            'Barbell Bench Press',
+            'Dumbbell Shoulder Press',
+            'Incline Dumbbell Press',
+            'Lateral Raises',
+            'Rope Pushdowns',
+            'Skull Crushers'
+        ]
+    },
+    {
+        id: 'tue', day: 'Tuesday', focus: 'Pull (Back/Biceps)',
+        exercises: [
+            'Deadlifts',
+            'Pull-ups',
+            'Bent-Over Rows',
+            'Face Pulls',
+            'Barbell Curls',
+            'Hammer Curls'
+        ]
+    },
+    {
+        id: 'wed', day: 'Wednesday', focus: 'Legs',
+        exercises: [
+            'Barbell Squats',
+            'Leg Press',
+            'Romanian Deadlifts',
+            'Leg Extensions',
+            'Leg Curls',
+            'Calf Raises'
+        ]
+    },
+    {
+        id: 'thu', day: 'Thursday', focus: 'Upper Body',
+        exercises: [
+            'Dumbbell Bench Press',
+            'Lat Pulldowns',
+            'Dumbbell Shoulder Press',
+            'Seated Cable Rows',
+            'Dips (Chest Focus)',
+            'Preacher Curls'
+        ]
+    },
+    {
+        id: 'fri', day: 'Friday', focus: 'Lower Body',
+        exercises: [
+            'Barbell Squats',
+            'Walking Lunges',
+            'Glute Bridges',
+            'Leg Extensions',
+            'Seated Calf Raises',
+            'Planks'
+        ]
+    },
+    {
+        id: 'sat', day: 'Saturday', focus: 'Legs + Abs',
+        exercises: [
+            'Barbell Squats',
+            'Romanian Deadlifts',
+            'Walking Lunges',
+            'Leg Extensions',
+            'Hanging Leg Raises',
+            'Planks'
+        ]
+    },
+    {
+        id: 'sun', day: 'Sunday', focus: 'Active Recovery + Core',
+        exercises: [
+            'Cardio',
+            'Planks',
+            'Hanging Leg Raises',
+            'Cable Crunches',
+            'Russian Twists',
+            'Mountain Climbers'
+        ]
+    }
+];
+
+export const getScheduleForGoal = (goalType) => {
+    return goalType === 'gain' ? HYPERTROPHY_SCHEDULE : WORKOUT_SCHEDULE;
+};
 
 export const CARDIO_PLAN = {
     weeks1_2: {
@@ -99,7 +183,7 @@ export const EXERCISES = {
                 'Perform 30 minutes of steady-state cardio (Treadmill, Elliptical, or Bike).',
                 'Maintain a heart rate of 120-140 BPM.',
                 'Focus on consistent breathing and endurance.',
-                'This burns approximately 600 calories.'
+                'This burns approximately 500 calories.'
             ]
         }
     ],
@@ -1756,7 +1840,7 @@ export const EXERCISES = {
 
 export const getExercisesForDay = (dayId) => {
     const day = WORKOUT_SCHEDULE.find(d => d.id === dayId);
-    if (!day || day.id === 'sun' || !day.exercises) return [];
+    if (!day || !day.exercises || day.exercises.length === 0) return [];
 
     const exercises = [];
     const allExercises = Object.values(EXERCISES).flat();

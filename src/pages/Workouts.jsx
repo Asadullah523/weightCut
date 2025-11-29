@@ -1,31 +1,49 @@
 import React, { useState, useEffect } from 'react';
 import { useApp } from '../context/AppContext';
 import { CheckCircle, Dumbbell, Flame, Clock, Activity } from 'lucide-react';
-import { WORKOUT_SCHEDULE, getExercisesForDay } from '../data/exercises';
+import { WORKOUT_SCHEDULE, getScheduleForGoal, EXERCISES } from '../data/exercises';
 
 const Workouts = () => {
-  const { user, workoutLogs, updateWorkoutLog } = useApp();
+  const { user, goals, workoutLogs, updateWorkoutLog } = useApp();
   const [selectedDay, setSelectedDay] = useState(null);
   const [celebratingExercise, setCelebratingExercise] = useState(null);
+  const [showResetModal, setShowResetModal] = useState(false);
+
+  const activeSchedule = getScheduleForGoal(goals?.goalType);
 
   useEffect(() => {
     const today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
-    const scheduleDay = WORKOUT_SCHEDULE.find(d => d.day === today);
+    const scheduleDay = Array.isArray(activeSchedule) ? activeSchedule.find(d => d.day === today) : null;
     if (scheduleDay) {
       setSelectedDay(scheduleDay.id);
     } else {
       setSelectedDay('sun'); 
     }
-  }, []);
+  }, [activeSchedule]);
 
   if (!user || !selectedDay) return null;
 
   const todayDate = new Date().toISOString().split('T')[0];
   const currentLog = workoutLogs[todayDate] || { completed: {} };
   
-  const exercises = getExercisesForDay(selectedDay);
-  const scheduleItem = WORKOUT_SCHEDULE.find(d => d.id === selectedDay);
-  const isRestDay = !scheduleItem || scheduleItem.day === 'Sunday';
+  const scheduleItem = activeSchedule.find(d => d.id === selectedDay);
+  const isRestDay = !scheduleItem || scheduleItem.exercises.length === 0;
+
+  // Helper to find exercise object by name
+  const getExerciseByName = (name) => {
+    if (name === 'Cardio') return EXERCISES.Cardio[0];
+    
+    for (const category in EXERCISES) {
+      const found = EXERCISES[category].find(ex => ex.name === name);
+      if (found) return { ...found, category };
+    }
+    return null;
+  };
+
+  const exercises = scheduleItem ? scheduleItem.exercises.map(name => {
+    const ex = getExerciseByName(name);
+    return ex ? { ...ex, id: name.replace(/\s+/g, '-').toLowerCase() } : null;
+  }).filter(Boolean) : [];
 
   const totalExercises = exercises.length;
   const completedCount = exercises.filter(ex => currentLog.completed && currentLog.completed[ex.id]).length;
@@ -37,7 +55,7 @@ const Workouts = () => {
   exercises.forEach(ex => {
     if (currentLog.completed && currentLog.completed[ex.id]) {
       if (ex.name === 'Cardio') {
-        totalCaloriesBurned += 600;
+        totalCaloriesBurned += 500;
       } else {
         totalCaloriesBurned += Math.round(weightInKg * 0.3);
       }
@@ -69,10 +87,13 @@ const Workouts = () => {
     }
   };
 
-  const clearTodayWorkout = () => {
-    if (window.confirm('Clear all completed exercises for today?')) {
-      updateWorkoutLog(todayDate, { completed: {} });
-    }
+  const clearTodayWorkout = () =>{
+    setShowResetModal(true);
+  };
+
+  const confirmReset = () => {
+    updateWorkoutLog(todayDate, { completed: {} });
+    setShowResetModal(false);
   };
 
   const getDayGreeting = () => {
@@ -87,38 +108,73 @@ const Workouts = () => {
     const groups = [];
     const focus = scheduleItem.focus;
     
+    // Helper to add group if exercises exist
+    const addGroup = (name, category) => {
+      const groupEx = exercises.filter(e => e.category === category);
+      if (groupEx.length > 0) groups.push({ name, exercises: groupEx });
+    };
+
+    // Always add Warm Up first if Cardio exists
+    const cardio = exercises.filter(e => e.name === 'Cardio');
+    if (cardio.length > 0) groups.push({ name: 'Warm Up', exercises: cardio });
+
     if (focus === 'Chest + Triceps') {
-      const cardio = exercises.filter(e => e.name === 'Cardio');
-      const chest = exercises.filter(e => e.category === 'Chest');
-      const triceps = exercises.filter(e => e.category === 'Triceps');
-      
-      if (cardio.length > 0) groups.push({ name: 'Warm Up', exercises: cardio });
-      if (chest.length > 0) groups.push({ name: 'Chest', exercises: chest });
-      if (triceps.length > 0) groups.push({ name: 'Triceps', exercises: triceps });
+      addGroup('Chest', 'Chest');
+      addGroup('Triceps', 'Triceps');
     } else if (focus === 'Back + Biceps') {
-      const cardio = exercises.filter(e => e.name === 'Cardio');
-      const back = exercises.filter(e => e.category === 'Back');
-      const biceps = exercises.filter(e => e.category === 'Biceps');
-      
-      if (cardio.length > 0) groups.push({ name: 'Warm Up', exercises: cardio });
-      if (back.length > 0) groups.push({ name: 'Back', exercises: back });
-      if (biceps.length > 0) groups.push({ name: 'Biceps', exercises: biceps });
+      addGroup('Back', 'Back');
+      addGroup('Biceps', 'Biceps');
     } else if (focus === 'Legs + Shoulders') {
-      const cardio = exercises.filter(e => e.name === 'Cardio');
-      const legs = exercises.filter(e => e.category === 'Legs');
-      const shoulders = exercises.filter(e => e.category === 'Shoulders');
-      
-      if (cardio.length > 0) groups.push({ name: 'Warm Up', exercises: cardio });
-      if (legs.length > 0) groups.push({ name: 'Legs', exercises: legs });
-      if (shoulders.length > 0) groups.push({ name: 'Shoulders', exercises: shoulders });
+      addGroup('Legs', 'Legs');
+      addGroup('Shoulders', 'Shoulders');
     } else if (focus === 'Legs + Abs') {
-      const cardio = exercises.filter(e => e.name === 'Cardio');
-      const legs = exercises.filter(e => e.category === 'Legs');
-      const abs = exercises.filter(e => e.category === 'Abs');
-      
-      if (cardio.length > 0) groups.push({ name: 'Warm Up', exercises: cardio });
-      if (legs.length > 0) groups.push({ name: 'Legs', exercises: legs });
-      if (abs.length > 0) groups.push({ name: 'Abs', exercises: abs });
+      addGroup('Legs', 'Legs');
+      addGroup('Abs', 'Abs');
+    } 
+    // Hypertrophy Schedule Logic
+    else if (focus.includes('Push')) {
+      addGroup('Chest', 'Chest');
+      addGroup('Shoulders', 'Shoulders');
+      addGroup('Triceps', 'Triceps');
+    } else if (focus.includes('Pull')) {
+      addGroup('Back', 'Back');
+      addGroup('Biceps', 'Biceps');
+      // Face Pulls are usually Shoulders/Back, let's check
+      const facePulls = exercises.filter(e => e.name === 'Face Pulls');
+      if (facePulls.length > 0 && !groups.some(g => g.name === 'Shoulders')) {
+         // If we haven't added shoulders, maybe add them or just include in Back for simplicity?
+         // Actually Face Pulls are often categorized as Shoulders in the data.
+         addGroup('Rear Delts', 'Shoulders');
+      }
+    } else if (focus === 'Legs') {
+      addGroup('Quads', 'Legs'); // Just group all legs together for now
+      // Or split by Quads/Hams if data supports it, but category is just 'Legs'
+      // So just add 'Legs'
+      if (!groups.some(g => g.name === 'Legs')) addGroup('Legs', 'Legs');
+      addGroup('Calves', 'Calves'); // If we have a Calves category? No, usually just Legs.
+    } else if (focus === 'Upper Body') {
+      addGroup('Chest', 'Chest');
+      addGroup('Back', 'Back');
+      addGroup('Shoulders', 'Shoulders');
+      addGroup('Arms', 'Biceps'); // And Triceps?
+      addGroup('Triceps', 'Triceps');
+    } else if (focus === 'Lower Body') {
+      addGroup('Legs', 'Legs');
+      addGroup('Core', 'Abs');
+    } else if (focus === 'Core + Abs') {
+      // Split the 6 abs exercises into two groups of 3
+      const absExercises = exercises.filter(e => e.category === 'Abs');
+      if (absExercises.length > 0) {
+        const midpoint = Math.ceil(absExercises.length / 2);
+        groups.push({ name: 'Core', exercises: absExercises.slice(0, midpoint) });
+        groups.push({ name: 'Abs', exercises: absExercises.slice(midpoint) });
+      }
+    } else {
+      // Fallback: Group by category for anything else
+      const categories = [...new Set(exercises.map(e => e.category))];
+      categories.forEach(cat => {
+        if (cat !== 'Cardio') addGroup(cat, cat);
+      });
     }
     
     return groups;
@@ -419,7 +475,7 @@ const Workouts = () => {
                         }}>
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '0.25rem' }}>
                             <Flame size={22} color="var(--accent)" />
-                            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--accent)' }}>600 cal</span>
+                            <span style={{ fontSize: '0.9rem', fontWeight: 700, color: 'var(--accent)' }}>500 cal</span>
                           </div>
                         </div>
                       )}
@@ -431,6 +487,135 @@ const Workouts = () => {
           ))
         )}
       </div>
+
+      {/* Reset Confirmation Modal */}
+      {showResetModal && (
+        <div style={{
+          position: 'fixed',
+          inset: 0,
+          background: 'rgba(0, 0, 0, 0.8)',
+          backdropFilter: 'blur(4px)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          zIndex: 1000,
+          animation: 'fadeIn 0.2s ease'
+        }}
+        onClick={() => setShowResetModal(false)}
+        >
+          <div 
+            style={{
+              background: 'var(--bg-card)',
+              borderRadius: '24px',
+              padding: '2rem',
+              maxWidth: '450px',
+              width: '90%',
+              border: '2px solid rgba(239, 68, 68, 0.3)',
+              boxShadow: '0 20px 60px rgba(0, 0, 0, 0.5)',
+              animation: 'scaleIn 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* Warning Icon */}
+            <div style={{
+              width: '70px',
+              height: '70px',
+              borderRadius: '50%',
+              background: 'linear-gradient(135deg, rgba(239, 68, 68, 0.2), rgba(220, 38, 38, 0.1))',
+              border: '3px solid rgba(239, 68, 68, 0.4)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              margin: '0 auto 1.5rem auto'
+            }}>
+              <svg width="36" height="36" viewBox="0 0 24 24" fill="none" stroke="#ef4444" strokeWidth="2.5">
+                <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                <line x1="12" y1="9" x2="12" y2="13"/>
+                <line x1="12" y1="17" x2="12.01" y2="17"/>
+              </svg>
+            </div>
+
+            {/* Title */}
+            <h3 style={{
+              fontSize: '1.5rem',
+              fontWeight: 800,
+              textAlign: 'center',
+              marginBottom: '0.75rem',
+              color: 'var(--text-main)'
+            }}>
+              Clear All Workouts?
+            </h3>
+
+            {/* Message */}
+            <p style={{
+              fontSize: '1rem',
+              color: 'var(--text-muted)',
+              textAlign: 'center',
+              lineHeight: 1.6,
+              marginBottom: '2rem'
+            }}>
+              This will reset all completed exercises for today. This action cannot be undone.
+            </p>
+
+            {/* Action Buttons */}
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: '1fr 1fr',
+              gap: '1rem'
+            }}>
+              <button
+                onClick={() => setShowResetModal(false)}
+                style={{
+                  padding: '0.875rem 1.5rem',
+                  borderRadius: '12px',
+                  border: '2px solid var(--border)',
+                  background: 'var(--bg-main)',
+                  color: 'var(--text-main)',
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'var(--bg-card)';
+                  e.currentTarget.style.borderColor = 'var(--primary)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'var(--bg-main)';
+                  e.currentTarget.style.borderColor = 'var(--border)';
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={confirmReset}
+                style={{
+                  padding: '0.875rem 1.5rem',
+                  borderRadius: '12px',
+                  border: 'none',
+                  background: 'linear-gradient(135deg, #ef4444, #dc2626)',
+                  color: 'white',
+                  fontSize: '1rem',
+                  fontWeight: 700,
+                  cursor: 'pointer',
+                  transition: 'all 0.2s',
+                  boxShadow: '0 4px 15px rgba(239, 68, 68, 0.4)'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-2px)';
+                  e.currentTarget.style.boxShadow = '0 6px 20px rgba(239, 68, 68, 0.5)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 4px 15px rgba(239, 68, 68, 0.4)';
+                }}
+              >
+                Yes, Clear All
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <style>{`
         @keyframes success-pulse {
@@ -445,6 +630,26 @@ const Workouts = () => {
           100% {
             opacity: 0;
             transform: scale(1.2);
+          }
+        }
+        
+        @keyframes fadeIn {
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
+        }
+        
+        @keyframes scaleIn {
+          from {
+            opacity: 0;
+            transform: scale(0.9);
+          }
+          to {
+            opacity: 1;
+            transform: scale(1);
           }
         }
       `}</style>

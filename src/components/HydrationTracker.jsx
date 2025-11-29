@@ -1,9 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Droplet, Plus, Minus, RotateCcw } from 'lucide-react';
+import { Droplet, Plus } from 'lucide-react';
 
 const HydrationTracker = () => {
   const [glasses, setGlasses] = useState(0);
-  const [lastAction, setLastAction] = useState(null);
   const [animating, setAnimating] = useState(false);
   const GOAL = 8;
 
@@ -23,8 +22,6 @@ const HydrationTracker = () => {
   const updateGlasses = (newCount) => {
     const count = Math.max(0, Math.min(newCount, 12));
     
-    // Save previous state for undo
-    setLastAction({ previous: glasses, new: count });
     setGlasses(count);
     
     // Trigger animation
@@ -38,14 +35,7 @@ const HydrationTracker = () => {
     localStorage.setItem('hydration_log', JSON.stringify({ date: today, count }));
   };
 
-  const undo = () => {
-    if (lastAction) {
-      setGlasses(lastAction.previous);
-      const today = new Date().toDateString();
-      localStorage.setItem('hydration_log', JSON.stringify({ date: today, count: lastAction.previous }));
-      setLastAction(null);
-    }
-  };
+
 
   const isGoalReached = glasses >= GOAL;
 
@@ -69,54 +59,12 @@ const HydrationTracker = () => {
           </div>
           Hydration
         </h3>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-          <span style={{ fontSize: '0.9rem', fontWeight: 600, color: isGoalReached ? '#10b981' : 'var(--text-muted)' }}>
-            {glasses}/{GOAL}
-          </span>
-          {lastAction && (
-            <button
-              onClick={undo}
-              style={{
-                padding: '0.3rem',
-                background: 'rgba(249, 115, 22, 0.1)',
-                border: '1px solid rgba(249, 115, 22, 0.3)',
-                borderRadius: '6px',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                transition: 'all 0.2s'
-              }}
-              className="btn"
-              title="Undo last action"
-            >
-              <RotateCcw size={14} color="var(--accent)" />
-            </button>
-          )}
-        </div>
+        <span style={{ fontSize: '0.9rem', fontWeight: 600, color: isGoalReached ? '#10b981' : 'var(--text-muted)' }}>
+          {glasses}/{GOAL}
+        </span>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: '1rem', position: 'relative', zIndex: 1 }}>
-        <button 
-          onClick={() => updateGlasses(glasses - 1)}
-          disabled={glasses === 0}
-          className="btn"
-          style={{ 
-            padding: '0', 
-            borderRadius: '50%', 
-            width: '36px', 
-            height: '36px', 
-            display: 'flex', 
-            alignItems: 'center', 
-            justifyContent: 'center', 
-            background: glasses === 0 ? 'rgba(255,255,255,0.05)' : 'var(--bg-main)',
-            border: '1px solid var(--border)',
-            cursor: glasses === 0 ? 'not-allowed' : 'pointer',
-            opacity: glasses === 0 ? 0.4 : 1
-          }}
-        >
-          <Minus size={16} color="var(--text-main)" />
-        </button>
-
+      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem', position: 'relative', zIndex: 1 }}>
         <div style={{ display: 'flex', gap: '6px', flex: 1, justifyContent: 'center', flexWrap: 'wrap', position: 'relative' }}>
           {[...Array(GOAL)].map((_, i) => (
             <div 

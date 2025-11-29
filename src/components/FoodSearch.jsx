@@ -1,12 +1,80 @@
-import React, { useState } from 'react';
-import { Search, Sparkles, X, ChevronRight, Activity, Heart, AlertCircle, CheckCircle2, Utensils } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, X, ChevronRight, Activity, AlertCircle, Check, Utensils, Star } from 'lucide-react';
+import { useApp } from '../context/AppContext';
 
 const FoodSearch = () => {
+  const { goals } = useApp();
   const [query, setQuery] = useState('');
   const [results, setResults] = useState([]);
   const [loading, setLoading] = useState(false);
   const [selectedFood, setSelectedFood] = useState(null);
   const [error, setError] = useState(null);
+  const [suggestions, setSuggestions] = useState([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [portionSize, setPortionSize] = useState(100); // Default 100g
+
+  const isGain = goals?.goalType === 'gain';
+
+  // Curated list of popular foods for instant suggestions
+  const DESI_FOOD_DB = [
+    { product_name: "Chicken Karahi", brands: "Homemade/Restaurant", nutriments: { "energy-kcal_100g": 250, proteins_100g: 18, fat_100g: 15, carbohydrates_100g: 5 } },
+    { product_name: "Chicken Biryani", brands: "Homemade", nutriments: { "energy-kcal_100g": 290, proteins_100g: 12, fat_100g: 10, carbohydrates_100g: 40 } },
+    { product_name: "Beef Nihari", brands: "Homemade", nutriments: { "energy-kcal_100g": 350, proteins_100g: 20, fat_100g: 25, carbohydrates_100g: 8 } },
+    { product_name: "Seekh Kabab", brands: "BBQ", nutriments: { "energy-kcal_100g": 220, proteins_100g: 22, fat_100g: 12, carbohydrates_100g: 4 } },
+    { product_name: "Chapli Kabab", brands: "Peshawari", nutriments: { "energy-kcal_100g": 280, proteins_100g: 18, fat_100g: 20, carbohydrates_100g: 6 } },
+    { product_name: "Daal Chawal", brands: "Homemade", nutriments: { "energy-kcal_100g": 180, proteins_100g: 8, fat_100g: 4, carbohydrates_100g: 30 } },
+    { product_name: "Haleem", brands: "Homemade", nutriments: { "energy-kcal_100g": 200, proteins_100g: 15, fat_100g: 8, carbohydrates_100g: 25 } },
+    { product_name: "Roti / Naan", brands: "Staple", nutriments: { "energy-kcal_100g": 260, proteins_100g: 8, fat_100g: 3, carbohydrates_100g: 50 } },
+    { product_name: "Samosa", brands: "Snack", nutriments: { "energy-kcal_100g": 260, proteins_100g: 4, fat_100g: 14, carbohydrates_100g: 30 } },
+    { product_name: "Gulab Jamun", brands: "Dessert", nutriments: { "energy-kcal_100g": 350, proteins_100g: 3, fat_100g: 15, carbohydrates_100g: 55, sugars_100g: 45 } },
+    { product_name: "Apple", brands: "Fresh Fruit", nutriments: { "energy-kcal_100g": 52, proteins_100g: 0.3, fat_100g: 0.2, carbohydrates_100g: 14, sugars_100g: 10 } },
+    { product_name: "Banana", brands: "Fresh Fruit", nutriments: { "energy-kcal_100g": 89, proteins_100g: 1.1, fat_100g: 0.3, carbohydrates_100g: 23, sugars_100g: 12 } },
+    { product_name: "Chicken Breast", brands: "Raw", nutriments: { "energy-kcal_100g": 165, proteins_100g: 31, fat_100g: 3.6, carbohydrates_100g: 0 } },
+    { product_name: "Eggs", brands: "Scrambled", nutriments: { "energy-kcal_100g": 148, proteins_100g: 10, fat_100g: 10, carbohydrates_100g: 1.3 } },
+    { product_name: "Brown Rice", brands: "Cooked", nutriments: { "energy-kcal_100g": 112, proteins_100g: 2.7, fat_100g: 0.9, carbohydrates_100g: 24 } },
+  ];
+
+  // Debounce logic for suggestions
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (query.length < 2) {
+        setSuggestions([]);
+        return;
+      }
+
+      // 1. Local Search (Instant)
+      const localMatches = DESI_FOOD_DB.filter(item => 
+        item.product_name.toLowerCase().includes(query.toLowerCase())
+      );
+      
+      // Set local matches immediately while API fetches
+      setSuggestions(localMatches);
+      setShowSuggestions(true);
+
+      try {
+        // 2. API Search
+        const response = await fetch(
+          `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=5`
+        );
+        if (response.ok) {
+          const data = await response.json();
+          if (data.products) {
+            // Combine: Local matches first, then API results
+            setSuggestions(prev => {
+              const apiProducts = data.products.filter(apiItem => 
+                !prev.some(localItem => localItem.product_name === apiItem.product_name)
+              );
+              return [...prev, ...apiProducts];
+            });
+          }
+        }
+      } catch (error) {
+        console.error("Error fetching suggestions:", error);
+      }
+    }, 300);
+
+    return () => clearTimeout(timer);
+  }, [query]);
 
   const searchFood = async (e) => {
     e.preventDefault();
@@ -41,88 +109,37 @@ const FoodSearch = () => {
   const getHealthVerdict = (product) => {
     const nutriscore = product.nutriscore_grade;
     const sugar = product.nutriments?.sugars_100g || 0;
-    const fat = product.nutriments?.fat_100g || 0;
     const protein = product.nutriments?.proteins_100g || 0;
+    const fat = product.nutriments?.fat_100g || 0;
 
-    if (nutriscore === 'a' || nutriscore === 'b') {
-      return { status: 'Excellent', color: '#10b981', icon: <CheckCircle2 />, text: 'Great choice! High nutritional value.' };
-    } else if (nutriscore === 'c') {
-      return { status: 'Moderate', color: '#f59e0b', icon: <Activity />, text: 'Good in moderation.' };
-    } else if (nutriscore === 'd' || nutriscore === 'e') {
-      return { status: 'Limit This', color: '#ef4444', icon: <AlertCircle />, text: 'High in calories, sugar, or saturated fats.' };
-    } else if (protein > 15) {
-      return { status: 'High Protein', color: '#3b82f6', icon: <Sparkles />, text: 'Excellent source of protein for muscle repair.' };
-    } else if (sugar > 20) {
-      return { status: 'High Sugar', color: '#ef4444', icon: <AlertCircle />, text: 'Contains a high amount of sugar.' };
+    // For weight gain: prioritize high protein and calories
+    // For weight loss: prioritize low calories and sugar
+    if (isGain) {
+      if (protein > 20) {
+        return { status: 'Excellent for Muscle Gain', color: '#10b981', icon: <Check size={18} />, text: 'High protein content - perfect for building muscle!' };
+      } else if (protein > 10 && (product.nutriments?.["energy-kcal_100g"] || 0) > 200) {
+        return { status: 'Good for Bulking', color: '#3b82f6', icon: <Activity size={18} />, text: 'Good balance of protein and calories for weight gain.' };
+      } else {
+        return { status: 'Moderate', color: '#f59e0b', icon: <Star size={18} />, text: 'Decent option, but consider higher protein foods.' };
+      }
     } else {
-      return { status: 'Neutral', color: '#64748b', icon: <Activity />, text: 'Standard nutritional profile.' };
+      // Weight loss logic
+      const calories = product.nutriments?.["energy-kcal_100g"] || 0;
+      if (calories < 100 && sugar < 10) {
+        return { status: 'Excellent for Weight Loss', color: '#10b981', icon: <Check size={18} />, text: 'Low calorie and sugar - great choice!' };
+      } else if (calories < 200 && sugar < 15) {
+        return { status: 'Good Choice', color: '#3b82f6', icon: <Activity size={18} />, text: 'Moderate calories - good in controlled portions.' };
+      } else {
+        return { status: 'Limit This', color: '#ef4444', icon: <AlertCircle size={18} />, text: 'High in calories or sugar - consume sparingly.' };
+      }
     }
   };
-
-  const [suggestions, setSuggestions] = useState([]);
-  const [showSuggestions, setShowSuggestions] = useState(false);
-
-  // Curated list of popular Desi/Pakistani foods for instant suggestions
-  const DESI_FOOD_DB = [
-    { product_name: "Chicken Karahi", brands: "Homemade/Restaurant", nutriments: { "energy-kcal_100g": 250, proteins_100g: 18, fat_100g: 15, carbohydrates_100g: 5 }, image_small_url: null },
-    { product_name: "Chicken Biryani", brands: "Homemade", nutriments: { "energy-kcal_100g": 290, proteins_100g: 12, fat_100g: 10, carbohydrates_100g: 40 }, image_small_url: null },
-    { product_name: "Beef Nihari", brands: "Homemade", nutriments: { "energy-kcal_100g": 350, proteins_100g: 20, fat_100g: 25, carbohydrates_100g: 8 }, image_small_url: null },
-    { product_name: "Seekh Kabab", brands: "BBQ", nutriments: { "energy-kcal_100g": 220, proteins_100g: 22, fat_100g: 12, carbohydrates_100g: 4 }, image_small_url: null },
-    { product_name: "Chapli Kabab", brands: "Peshawari", nutriments: { "energy-kcal_100g": 280, proteins_100g: 18, fat_100g: 20, carbohydrates_100g: 6 }, image_small_url: null },
-    { product_name: "Daal Chawal", brands: "Homemade", nutriments: { "energy-kcal_100g": 180, proteins_100g: 8, fat_100g: 4, carbohydrates_100g: 30 }, image_small_url: null },
-    { product_name: "Haleem", brands: "Homemade", nutriments: { "energy-kcal_100g": 200, proteins_100g: 15, fat_100g: 8, carbohydrates_100g: 25 }, image_small_url: null },
-    { product_name: "Roti / Naan", brands: "Staple", nutriments: { "energy-kcal_100g": 260, proteins_100g: 8, fat_100g: 3, carbohydrates_100g: 50 }, image_small_url: null },
-    { product_name: "Samosa", brands: "Snack", nutriments: { "energy-kcal_100g": 260, proteins_100g: 4, fat_100g: 14, carbohydrates_100g: 30 }, image_small_url: null },
-    { product_name: "Gulab Jamun", brands: "Dessert", nutriments: { "energy-kcal_100g": 350, proteins_100g: 3, fat_100g: 15, carbohydrates_100g: 55, sugars_100g: 45 }, image_small_url: null },
-  ];
-
-  // Debounce logic for suggestions
-  React.useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (query.length < 2) {
-        setSuggestions([]);
-        return;
-      }
-
-      // 1. Local Search (Instant)
-      const localMatches = DESI_FOOD_DB.filter(item => 
-        item.product_name.toLowerCase().includes(query.toLowerCase())
-      );
-      
-      // Set local matches immediately while API fetches
-      setSuggestions(localMatches);
-      setShowSuggestions(true);
-
-      try {
-        // 2. API Search
-        const response = await fetch(
-          `https://world.openfoodfacts.org/cgi/search.pl?search_terms=${encodeURIComponent(query)}&search_simple=1&action=process&json=1&page_size=5`
-        );
-        if (response.ok) {
-          const data = await response.json();
-          if (data.products) {
-            // Combine: Local matches first, then API results (avoiding duplicates if possible, though simple concat is fine for now)
-            setSuggestions(prev => {
-              const apiProducts = data.products.filter(apiItem => 
-                !prev.some(localItem => localItem.product_name === apiItem.product_name)
-              );
-              return [...prev, ...apiProducts];
-            });
-          }
-        }
-      } catch (error) {
-        console.error("Error fetching suggestions:", error);
-      }
-    }, 300); // Reduced debounce to 300ms for snappier feel
-
-    return () => clearTimeout(timer);
-  }, [query]);
 
   const handleSuggestionClick = (product) => {
     setQuery(product.product_name);
     setShowSuggestions(false);
     setSelectedFood(product);
-    setResults([product]); // Show this product as the result
+    setResults([product]);
   };
 
   return (
@@ -137,7 +154,7 @@ const FoodSearch = () => {
           justifyContent: 'center',
           boxShadow: '0 4px 12px rgba(139, 92, 246, 0.3)'
         }}>
-          <Sparkles size={20} color="white" />
+          <Search size={20} color="white" />
         </div>
         <div>
           <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>AI Smart Food Search</h3>
@@ -205,7 +222,7 @@ const FoodSearch = () => {
             boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
             overflow: 'hidden'
           }}>
-            {suggestions.map((product, idx) => (
+            {suggestions.slice(0, 8).map((product, idx) => (
               <div
                 key={product.code || idx}
                 onClick={() => handleSuggestionClick(product)}
@@ -255,7 +272,7 @@ const FoodSearch = () => {
           </div>
           
           <div style={{ padding: '1.5rem' }}>
-            <div style={{ display: 'flex', gap: '1.5rem', flexDirection: 'column', md: 'row' }}>
+            <div style={{ display: 'flex', gap: '1.5rem', flexDirection: 'column' }}>
               <div style={{ display: 'flex', gap: '1.5rem', alignItems: 'flex-start' }}>
                 {selectedFood.image_url && (
                   <img 
@@ -287,30 +304,93 @@ const FoodSearch = () => {
                 </div>
               </div>
 
-              <div style={{ marginTop: '1.5rem', padding: '1rem', background: `${getHealthVerdict(selectedFood).color}10`, borderRadius: '12px', border: `1px solid ${getHealthVerdict(selectedFood).color}30` }}>
+              {/* Portion Size Input */}
+              <div style={{ padding: '1.5rem', background: 'rgba(139, 92, 246, 0.1)', borderRadius: '12px', border: '1px solid rgba(139, 92, 246, 0.3)' }}>
+                <label style={{ display: 'block', marginBottom: '0.75rem', fontWeight: 700, fontSize: '1rem' }}>
+                  How much did you eat?
+                </label>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+                  <input
+                    type="number"
+                    value={portionSize}
+                    onChange={(e) => setPortionSize(Math.max(1, parseInt(e.target.value) || 100))}
+                    min="1"
+                    max="2000"
+                    style={{
+                      width: '120px',
+                      padding: '0.75rem',
+                      fontSize: '1.25rem',
+                      fontWeight: 700,
+                      borderRadius: '8px',
+                      border: '2px solid var(--border)',
+                      background: 'var(--bg-card)',
+                      color: 'var(--text-main)',
+                      textAlign: 'center'
+                    }}
+                  />
+                  <span style={{ fontSize: '1.1rem', fontWeight: 600, color: 'var(--text-muted)' }}>grams</span>
+                  <div style={{ flex: 1, display: 'flex', gap: '0.5rem' }}>
+                    <button onClick={() => setPortionSize(100)} style={{ padding: '0.5rem 1rem', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>100g</button>
+                    <button onClick={() => setPortionSize(200)} style={{ padding: '0.5rem 1rem', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>200g</button>
+                    <button onClick={() => setPortionSize(300)} style={{ padding: '0.5rem 1rem', background: 'var(--bg-card)', border: '1px solid var(--border)', borderRadius: '6px', cursor: 'pointer', fontSize: '0.85rem' }}>300g</button>
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ padding: '1rem', background: `${getHealthVerdict(selectedFood).color}10`, borderRadius: '12px', border: `1px solid ${getHealthVerdict(selectedFood).color}30` }}>
                 <h4 style={{ color: getHealthVerdict(selectedFood).color, fontWeight: 700, marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  Health Verdict
+                  Health Verdict for {isGain ? 'Muscle Gain' : 'Weight Loss'}
                 </h4>
                 <p style={{ fontSize: '0.95rem', lineHeight: 1.5 }}>
                   {getHealthVerdict(selectedFood).text}
                 </p>
               </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem', marginTop: '1.5rem' }}>
-                <NutrientCard label="Calories" value={selectedFood.nutriments?.['energy-kcal_100g'] || 0} unit="kcal" color="var(--accent)" />
-                <NutrientCard label="Protein" value={selectedFood.nutriments?.proteins_100g || 0} unit="g" color="var(--primary)" />
-                <NutrientCard label="Carbs" value={selectedFood.nutriments?.carbohydrates_100g || 0} unit="g" color="var(--secondary)" />
-                <NutrientCard label="Fat" value={selectedFood.nutriments?.fat_100g || 0} unit="g" color="#ef4444" />
+              {/* Nutritional Info for Selected Portion */}
+              <div style={{ padding: '1.5rem', background: 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(147, 51, 234, 0.05) 100%)', borderRadius: '12px', border: '1px solid rgba(59, 130, 246, 0.2)' }}>
+                <h4 style={{ marginBottom: '1rem', fontSize: '1.1rem', fontWeight: 700 }}>
+                  Nutritional Info for {portionSize}g
+                </h4>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.75rem' }}>
+                  <NutrientCard 
+                    label="Calories" 
+                    value={((selectedFood.nutriments?.['energy-kcal_100g'] || 0) * portionSize / 100)} 
+                    unit="kcal" 
+                    color="var(--accent)" 
+                  />
+                  <NutrientCard 
+                    label="Protein" 
+                    value={((selectedFood.nutriments?.proteins_100g || 0) * portionSize / 100)} 
+                    unit="g" 
+                    color="var(--primary)" 
+                  />
+                  <NutrientCard 
+                    label="Carbs" 
+                    value={((selectedFood.nutriments?.carbohydrates_100g || 0) * portionSize / 100)} 
+                    unit="g" 
+                    color="var(--secondary)" 
+                  />
+                  <NutrientCard 
+                    label="Fat" 
+                    value={((selectedFood.nutriments?.fat_100g || 0) * portionSize / 100)} 
+                    unit="g" 
+                    color="#ef4444" 
+                  />
+                </div>
               </div>
               
-              <div style={{ marginTop: '1.5rem', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                  <div style={{ padding: '1rem', background: 'var(--bg-card)', borderRadius: '8px' }}>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Sugar (100g)</span>
-                    <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>{selectedFood.nutriments?.sugars_100g || 0}g</p>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Sugar ({portionSize}g)</span>
+                    <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+                      {((selectedFood.nutriments?.sugars_100g || 0) * portionSize / 100).toFixed(1)}g
+                    </p>
                  </div>
                  <div style={{ padding: '1rem', background: 'var(--bg-card)', borderRadius: '8px' }}>
-                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Fiber (100g)</span>
-                    <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>{selectedFood.nutriments?.fiber_100g || 0}g</p>
+                    <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Fiber ({portionSize}g)</span>
+                    <p style={{ fontSize: '1.1rem', fontWeight: 700 }}>
+                      {((selectedFood.nutriments?.fiber_100g || 0) * portionSize / 100).toFixed(1)}g
+                    </p>
                  </div>
               </div>
             </div>
@@ -368,7 +448,5 @@ const NutrientCard = ({ label, value, unit, color }) => (
     <p style={{ fontSize: '1.1rem', fontWeight: 800, color: color }}>{Math.round(value)}{unit}</p>
   </div>
 );
-
-
 
 export default FoodSearch;

@@ -1,5 +1,4 @@
-import React from 'react'
-import { Routes, Route, Navigate, useLocation, Link } from 'react-router-dom'
+import React, { useState } from 'react'
 import { useApp } from './context/AppContext'
 import { LayoutDashboard, Target, Dumbbell, Utensils, Settings, Trophy } from 'lucide-react'
 
@@ -10,31 +9,42 @@ import Goals from './pages/Goals'
 import Workouts from './pages/Workouts'
 import Nutrition from './pages/Nutrition'
 import Achievements from './pages/Achievements'
-
 import ExerciseLibrary from './pages/ExerciseLibrary'
 
 function App() {
   const { user, loading } = useApp();
-  const location = useLocation();
+  const [activeTab, setActiveTab] = useState('dashboard');
 
   if (loading) {
     return <div className="flex-center" style={{ height: '100vh' }}>Loading...</div>;
   }
 
-  // Redirect to onboarding if no user
-  if (!user && location.pathname !== '/onboarding') {
-    return <Navigate to="/onboarding" replace />;
+  // Show onboarding if no user
+  if (!user) {
+    // Ensure we reset to dashboard when user is logged out
+    if (activeTab !== 'dashboard') setActiveTab('dashboard');
+    return <Onboarding />;
   }
 
-  // Redirect to dashboard if user exists and trying to access onboarding
-  if (user && location.pathname === '/onboarding') {
-    return <Navigate to="/" replace />;
-  }
-
-  // Standalone layout for onboarding
-  if (location.pathname === '/onboarding') {
-    return <Routes><Route path="/onboarding" element={<Onboarding />} /></Routes>;
-  }
+  // Render active page based on tab
+  const renderActivePage = () => {
+    switch (activeTab) {
+      case 'dashboard':
+        return <Dashboard />;
+      case 'workouts':
+        return <Workouts />;
+      case 'exercises':
+        return <ExerciseLibrary />;
+      case 'nutrition':
+        return <Nutrition />;
+      case 'achievements':
+        return <Achievements />;
+      case 'goals':
+        return <Goals />;
+      default:
+        return <Dashboard />;
+    }
+  };
 
   return (
     <div className="app">
@@ -62,51 +72,48 @@ function App() {
             <Dumbbell size={20} color="white" />
           </div>
           <h1 style={{ fontSize: '1.25rem', fontWeight: '800', letterSpacing: '-0.5px' }}>
-            Weight<span style={{ color: 'var(--primary)' }}>Cut</span>
+            Fit<span style={{ color: 'var(--primary)' }}>Track</span>
           </h1>
         </div>
         
         <div className="flex-center" style={{ gap: '1.5rem' }}>
-          <NavLink to="/" icon={<LayoutDashboard size={20} />} label="Dash" />
-          <NavLink to="/workouts" icon={<Dumbbell size={20} />} label="Train" />
-          <NavLink to="/exercises" icon={<Target size={20} />} label="Gallery" />
-          <NavLink to="/nutrition" icon={<Utensils size={20} />} label="Diet" />
-          <NavLink to="/achievements" icon={<Trophy size={20} />} label="Awards" />
-          <NavLink to="/goals" icon={<Settings size={20} />} label="Settings" />
+          <NavLink tab="dashboard" icon={<LayoutDashboard size={20} />} label="Dash" activeTab={activeTab} setActiveTab={setActiveTab} />
+          <NavLink tab="workouts" icon={<Dumbbell size={20} />} label="Train" activeTab={activeTab} setActiveTab={setActiveTab} />
+          <NavLink tab="exercises" icon={<Target size={20} />} label="Gallery" activeTab={activeTab} setActiveTab={setActiveTab} />
+          <NavLink tab="nutrition" icon={<Utensils size={20} />} label="Diet" activeTab={activeTab} setActiveTab={setActiveTab} />
+          <NavLink tab="achievements" icon={<Trophy size={20} />} label="Awards" activeTab={activeTab} setActiveTab={setActiveTab} />
+          <NavLink tab="goals" icon={<Settings size={20} />} label="Settings" activeTab={activeTab} setActiveTab={setActiveTab} />
         </div>
       </nav>
       
       <main style={{ padding: '2rem 0', minHeight: 'calc(100vh - var(--nav-height))' }}>
-        <Routes>
-          <Route path="/" element={<Dashboard />} />
-          <Route path="/goals" element={<Goals />} />
-          <Route path="/workouts" element={<Workouts />} />
-          <Route path="/exercises" element={<ExerciseLibrary />} />
-          <Route path="/nutrition" element={<Nutrition />} />
-          <Route path="/achievements" element={<Achievements />} />
-          <Route path="*" element={<Navigate to="/" />} />
-        </Routes>
+        {renderActivePage()}
       </main>
     </div>
   )
 }
 
-const NavLink = ({ to, icon, label }) => {
-  const location = useLocation();
-  const isActive = location.pathname === to;
+const NavLink = ({ tab, icon, label, activeTab, setActiveTab }) => {
+  const isActive = activeTab === tab;
   
   return (
-    <Link to={to} style={{ 
-      display: 'flex', 
-      flexDirection: 'column', 
-      alignItems: 'center', 
-      gap: '4px',
-      fontSize: '0.75rem',
-      color: isActive ? 'var(--primary)' : 'var(--text-muted)',
-      fontWeight: isActive ? 600 : 500,
-      position: 'relative',
-      transition: 'all 0.2s ease'
-    }}>
+    <button 
+      onClick={() => setActiveTab(tab)}
+      style={{ 
+        display: 'flex', 
+        flexDirection: 'column', 
+        alignItems: 'center', 
+        gap: '4px',
+        fontSize: '0.75rem',
+        color: isActive ? 'var(--primary)' : 'var(--text-muted)',
+        fontWeight: isActive ? 600 : 500,
+        position: 'relative',
+        transition: 'all 0.2s ease',
+        background: 'transparent',
+        border: 'none',
+        cursor: 'pointer'
+      }}
+    >
       <div style={{
         padding: '0.5rem',
         borderRadius: '0.75rem',
@@ -128,7 +135,7 @@ const NavLink = ({ to, icon, label }) => {
           background: 'var(--primary)'
         }} />
       )}
-    </Link>
+    </button>
   );
 };
 

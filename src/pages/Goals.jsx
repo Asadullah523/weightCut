@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useApp } from '../context/AppContext';
 import { getDailyQuote } from '../data/quotes';
-import { Download, Moon, Sun, Trash2, LogOut, User, Calendar, Target, Weight, Settings } from 'lucide-react';
+import { Download, Moon, Sun, Trash2, LogOut, User, Calendar, Target, Weight, Settings, AlertTriangle, X } from 'lucide-react';
 
 const Goals = () => {
-  const { user, goals, weightLogs, workoutLogs, nutritionLogs, settings, toggleTheme } = useApp();
+  const { user, goals, weightLogs, workoutLogs, nutritionLogs, settings, toggleTheme, resetApp } = useApp();
+  const [showResetModal, setShowResetModal] = useState(false);
 
   if (!user || !goals) return null;
 
@@ -72,11 +73,17 @@ const Goals = () => {
     document.body.removeChild(link);
   };
 
-  const handleReset = () => {
-    if (window.confirm('Are you sure you want to reset all data? This cannot be undone.')) {
-      localStorage.clear();
-      window.location.reload();
-    }
+  const handleResetClick = () => {
+    setShowResetModal(true);
+  };
+
+  const handleResetConfirm = () => {
+    setShowResetModal(false);
+    resetApp();
+  };
+
+  const handleResetCancel = () => {
+    setShowResetModal(false);
   };
 
   return (
@@ -236,7 +243,7 @@ const Goals = () => {
             <div style={{ marginTop: '1rem', paddingTop: '1rem', borderTop: '1px solid var(--border)' }}>
               <h4 style={{ color: '#ef4444', marginBottom: '0.5rem', fontSize: '0.9rem', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Danger Zone</h4>
               <button 
-                onClick={handleReset} 
+                onClick={handleResetClick} 
                 className="btn" 
                 style={{ 
                   width: '100%', 
@@ -252,6 +259,91 @@ const Goals = () => {
           </div>
         </div>
       </div>
+
+      {/* Simplified Reset Warning Modal */}
+      {showResetModal && (
+        <div 
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(255, 255, 255, 0.1)', // Very subtle overlay
+            backdropFilter: 'blur(2px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 9999,
+            animation: 'fadeIn 0.2s ease-out',
+            padding: '1rem'
+          }}
+          onClick={handleResetCancel}
+        >
+          <div 
+            className="card glass-effect"
+            style={{
+              maxWidth: '400px',
+              width: '100%',
+              padding: '1.5rem',
+              border: '1px solid var(--border)',
+              boxShadow: '0 10px 40px rgba(0, 0, 0, 0.2)',
+              animation: 'scaleIn 0.2s ease-out',
+              background: 'var(--bg-card)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+              <div style={{
+                width: '40px',
+                height: '40px',
+                borderRadius: '50%',
+                background: 'rgba(239, 68, 68, 0.1)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                color: '#ef4444'
+              }}>
+                <AlertTriangle size={20} />
+              </div>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: 700, margin: 0 }}>Reset Data?</h3>
+            </div>
+
+            <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', lineHeight: '1.5' }}>
+              This will permanently delete all your progress, logs, and settings. You cannot undo this action.
+            </p>
+
+            <div style={{ display: 'flex', gap: '0.75rem', justifyContent: 'flex-end' }}>
+              <button
+                onClick={handleResetCancel}
+                className="btn"
+                style={{
+                  padding: '0.75rem 1rem',
+                  fontSize: '0.9rem',
+                  background: 'transparent',
+                  color: 'var(--text-main)',
+                  border: '1px solid var(--border)'
+                }}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleResetConfirm}
+                className="btn"
+                style={{
+                  padding: '0.75rem 1rem',
+                  fontSize: '0.9rem',
+                  background: '#ef4444',
+                  color: 'white',
+                  border: 'none'
+                }}
+              >
+                Yes, Reset
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

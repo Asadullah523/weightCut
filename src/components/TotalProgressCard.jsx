@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { Target, TrendingDown, Trophy } from 'lucide-react';
 
-const TotalProgressCard = ({ startWeight, currentWeight, targetWeight }) => {
+const TotalProgressCard = ({ startWeight, currentWeight, targetWeight, isGain }) => {
   const [animatedPercentage, setAnimatedPercentage] = useState(0);
-  const [animatedLost, setAnimatedLost] = useState(0);
+  const [animatedChange, setAnimatedChange] = useState(0);
   const [animatedRemaining, setAnimatedRemaining] = useState(0);
 
-  const totalToLose = startWeight - targetWeight;
-  const totalLost = startWeight - currentWeight;
-  const percentage = Math.min(100, Math.max(0, (totalLost / totalToLose) * 100));
-  const remaining = currentWeight - targetWeight;
+  const totalGoalDiff = Math.abs(startWeight - targetWeight);
+  const currentChange = Math.abs(startWeight - currentWeight);
+  const percentage = totalGoalDiff > 0 ? Math.min(100, Math.max(0, (currentChange / totalGoalDiff) * 100)) : 0;
+  const remaining = Math.abs(currentWeight - targetWeight);
 
   // Animate values on mount and when they change
   useEffect(() => {
@@ -23,19 +23,19 @@ const TotalProgressCard = ({ startWeight, currentWeight, targetWeight }) => {
       const progress = currentStep / steps;
       
       setAnimatedPercentage(percentage * progress);
-      setAnimatedLost(totalLost * progress);
+      setAnimatedChange(currentChange * progress);
       setAnimatedRemaining(remaining * progress);
 
       if (currentStep >= steps) {
         clearInterval(interval);
         setAnimatedPercentage(percentage);
-        setAnimatedLost(totalLost);
+        setAnimatedChange(currentChange);
         setAnimatedRemaining(remaining);
       }
     }, stepDuration);
 
     return () => clearInterval(interval);
-  }, [percentage, totalLost, remaining]);
+  }, [percentage, currentChange, remaining]);
 
   return (
     <div className="card glass-effect card-hover" style={{ gridColumn: 'span 2' }}>
@@ -94,15 +94,17 @@ const TotalProgressCard = ({ startWeight, currentWeight, targetWeight }) => {
         <div style={{ flex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem' }}>
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.25rem' }}>
-              <TrendingDown size={16} color="var(--secondary)" />
-              <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>Total Lost</span>
+              <TrendingDown size={16} color="var(--secondary)" style={{ transform: isGain ? 'rotate(180deg)' : 'none' }} />
+              <span style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                {isGain ? 'Total Gained' : 'Total Lost'}
+              </span>
             </div>
             <p style={{ 
               fontSize: '1.5rem', 
               fontWeight: '600',
               transition: 'all 0.3s ease'
             }}>
-              {animatedLost.toFixed(1)} <span style={{ fontSize: '1rem', fontWeight: 'normal' }}>kg</span>
+              {animatedChange.toFixed(1)} <span style={{ fontSize: '1rem', fontWeight: 'normal' }}>kg</span>
             </p>
           </div>
           

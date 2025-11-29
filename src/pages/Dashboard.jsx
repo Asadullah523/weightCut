@@ -46,7 +46,7 @@ const Dashboard = () => {
           
           // Calculate calories based on exercise type
           if (exercise.name === 'Cardio') {
-            totalCaloriesBurned += 600;
+            totalCaloriesBurned += 500;
           } else {
             totalCaloriesBurned += Math.round(weightInKg * 0.3);
           }
@@ -62,16 +62,27 @@ const Dashboard = () => {
   // Calculate estimated weight based on calories burned
   // 7700 calories ≈ 1 kg of fat
   const estimatedKgLost = totalCaloriesBurned / 7700;
-  const estimatedWeight = Math.max(targetWeight, startWeight - estimatedKgLost);
   
-  // Use estimated weight for visuals (shows progress as workouts are completed)
-  // This makes the progress bars move dynamically!
-  const displayWeight = estimatedWeight;
+  // For weight loss, we estimate progress based on workouts.
+  // For weight gain, we rely on the actual current weight since burning calories doesn't equal gaining weight.
+  const isGain = goals.goalType === 'gain' || targetWeight > startWeight;
+  
+  let displayWeight = user.currentWeight || startWeight || 70;
+  if (!isGain) {
+     displayWeight = Math.max(targetWeight, startWeight - estimatedKgLost);
+  }
 
   // Weight progress calculations
-  const weightLost = startWeight - displayWeight;
-  const weightToLose = displayWeight - targetWeight;
-  const progressPercentage = ((startWeight - displayWeight) / (startWeight - targetWeight)) * 100;
+  // isGain is already calculated above
+  const weightChange = Math.abs(displayWeight - startWeight);
+  const weightRemaining = Math.abs(targetWeight - displayWeight);
+  
+  let progressPercentage = 0;
+  if (isGain) {
+    progressPercentage = ((displayWeight - startWeight) / (targetWeight - startWeight)) * 100;
+  } else {
+    progressPercentage = ((startWeight - displayWeight) / (startWeight - targetWeight)) * 100;
+  }
   
   // Time Progress
   const startDate = new Date(goals.startDate);
@@ -83,6 +94,10 @@ const Dashboard = () => {
   const daysRemaining = Math.max(0, Math.ceil((targetDate - today) / (1000 * 60 * 60 * 24)));
   const timeProgressPercentage = (daysPassed / totalDays) * 100;
 
+  // Determine if user is new (first time logging in after onboarding)
+  const isNewUser = weightLogs.length === 0 && totalWorkoutsCompleted === 0;
+  const welcomeMessage = isNewUser ? 'Welcome' : 'Welcome back';
+
   return (
     <div className="container animate-fade-in" style={{ paddingBottom: '120px' }}>
       {/* Hero Section */}
@@ -91,10 +106,10 @@ const Dashboard = () => {
           {today.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric' })}
         </p>
         <h1 style={{ fontSize: '2.5rem', fontWeight: 800, lineHeight: 1.1, marginBottom: '0.5rem' }}>
-          Welcome back, <span className="gradient-text">{user.name.split(' ')[0]}</span> 👋
+          {welcomeMessage}, <span className="gradient-text">{user.name.split(' ')[0]}</span> 👋
         </h1>
         <p style={{ color: 'var(--text-muted)', maxWidth: '600px', fontSize: '1.05rem' }}>
-          Here's your progress overview. Keep pushing towards your goals!
+          {isNewUser ? "Let's start your fitness journey! Log your first workout to see your progress." : "Here's your progress overview. Keep pushing towards your goals!"}
         </p>
       </div>
 
@@ -123,27 +138,31 @@ const Dashboard = () => {
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
             <Scale size={22} color="var(--primary)" />
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Estimated Weight</span>
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Current Weight</span>
           </div>
           <p style={{ fontSize: '2.25rem', fontWeight: 700, lineHeight: 1, marginBottom: '0.25rem' }}>
             {displayWeight.toFixed(1)}<span style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-muted)' }}>kg</span>
           </p>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>From {totalCaloriesBurned.toLocaleString()} cal burned</p>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Target: {targetWeight} kg</p>
         </div>
 
         <div className="card" style={{ 
           padding: '1.5rem',
-          background: 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)',
-          border: '1px solid rgba(16, 185, 129, 0.2)'
+          background: isGain 
+            ? 'linear-gradient(135deg, rgba(59, 130, 246, 0.1) 0%, rgba(37, 99, 235, 0.05) 100%)' // Blue for gain
+            : 'linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(5, 150, 105, 0.05) 100%)', // Green for loss
+          border: isGain ? '1px solid rgba(59, 130, 246, 0.2)' : '1px solid rgba(16, 185, 129, 0.2)'
         }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginBottom: '1rem' }}>
-            <TrendingDown size={22} color="#10b981" />
-            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>Weight Lost</span>
+            {isGain ? <TrendingDown size={22} color="#3b82f6" style={{ transform: 'rotate(180deg)' }} /> : <TrendingDown size={22} color="#10b981" />}
+            <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', fontWeight: 600 }}>
+              {isGain ? 'Weight Gained' : 'Weight Lost'}
+            </span>
           </div>
-          <p style={{ fontSize: '2.25rem', fontWeight: 700, lineHeight: 1, marginBottom: '0.25rem', color: '#10b981' }}>
-            {weightLost.toFixed(1)}<span style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-muted)' }}>kg</span>
+          <p style={{ fontSize: '2.25rem', fontWeight: 700, lineHeight: 1, marginBottom: '0.25rem', color: isGain ? '#3b82f6' : '#10b981' }}>
+            {weightChange.toFixed(1)}<span style={{ fontSize: '1.25rem', fontWeight: 600, color: 'var(--text-muted)' }}>kg</span>
           </p>
-          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{weightToLose.toFixed(1)} kg to goal</p>
+          <p style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>{weightRemaining.toFixed(1)} kg to goal</p>
         </div>
 
         <div className="card" style={{ 
@@ -183,6 +202,7 @@ const Dashboard = () => {
           startWeight={startWeight} 
           currentWeight={displayWeight} 
           targetWeight={targetWeight} 
+          isGain={isGain}
         />
       </div>
 

@@ -13,9 +13,10 @@ const WeightTrendChart = ({ startWeight, currentWeight, targetWeight }) => {
   if (!start || !current || !target) return null;
 
   // Calculate percentage progress
-  const totalToLose = start - target;
-  const lostSoFar = start - current;
-  const percentage = Math.min(100, Math.max(0, (lostSoFar / totalToLose) * 100));
+  const totalChange = Math.abs(target - start);
+  const currentChange = Math.abs(current - start);
+  const percentage = totalChange > 0 ? Math.min(100, Math.max(0, (currentChange / totalChange) * 100)) : 0;
+  const isGain = target > start;
 
   // Animate progress on mount
   useEffect(() => {
@@ -27,9 +28,9 @@ const WeightTrendChart = ({ startWeight, currentWeight, targetWeight }) => {
 
   // Calculate milestones (25%, 50%, 75%)
   const milestones = [
-    { percent: 25, label: '25%', weight: start - (totalToLose * 0.25) },
-    { percent: 50, label: '50%', weight: start - (totalToLose * 0.50) },
-    { percent: 75, label: '75%', weight: start - (totalToLose * 0.75) }
+    { percent: 25, label: '25%', weight: isGain ? start + (totalChange * 0.25) : start - (totalChange * 0.25) },
+    { percent: 50, label: '50%', weight: isGain ? start + (totalChange * 0.50) : start - (totalChange * 0.50) },
+    { percent: 75, label: '75%', weight: isGain ? start + (totalChange * 0.75) : start - (totalChange * 0.75) }
   ];
 
   return (
@@ -231,8 +232,8 @@ const WeightTrendChart = ({ startWeight, currentWeight, targetWeight }) => {
             alignItems: 'center',
             gap: '0.5rem'
           }}>
-            <TrendingDown size={16} />
-            {lostSoFar.toFixed(1)} kg lost
+            <TrendingDown size={16} style={{ transform: isGain ? 'rotate(180deg)' : 'none' }} />
+            {currentChange.toFixed(1)} kg {isGain ? 'gained' : 'lost'}
           </div>
           <div style={{
             width: 0,
@@ -268,7 +269,7 @@ const WeightTrendChart = ({ startWeight, currentWeight, targetWeight }) => {
         <p style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 500 }}>
           You're <span style={{ color: 'var(--primary)', fontWeight: 700 }}>{Math.round(animatedProgress)}%</span> of the way there! 
           <br/>
-          <span style={{ fontSize: '0.9rem' }}>Only <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{(current - target).toFixed(1)} kg</span> to go! 💪</span>
+          <span style={{ fontSize: '0.9rem' }}>Only <span style={{ fontWeight: 700, color: 'var(--accent)' }}>{Math.abs(current - target).toFixed(1)} kg</span> to go! 💪</span>
         </p>
       </div>
 
