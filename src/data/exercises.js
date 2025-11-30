@@ -191,7 +191,7 @@ export const EXERCISES = {
         {
             name: 'Barbell Bench Press',
             sets: 4, reps: '10-12', rest: '90s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/machine_chest_press.png',
             instructions: [
                 'Lie on a flat bench with your eyes directly under the bar. Grip the bar slightly wider than shoulder-width apart.',
                 'Unrack the bar and hold it directly over your chest with your arms fully extended.',
@@ -204,7 +204,7 @@ export const EXERCISES = {
         {
             name: 'Dumbbell Bench Press',
             sets: 4, reps: '10-12', rest: '90s',
-            image: '/assets/incline_dumbbell_press_1763936904160.png',
+            image: '/assets/landmine_press.png',
             instructions: [
                 'Lie flat on a bench holding a dumbbell in each hand at chest level.',
                 'Your palms should be facing forward with thumbs wrapped around the handles.',
@@ -216,7 +216,7 @@ export const EXERCISES = {
         {
             name: 'Incline Dumbbell Press',
             sets: 3, reps: '10-12', rest: '75s',
-            image: '/assets/incline_dumbbell_press_1763936904160.png',
+            image: '/assets/landmine_press.png',
             instructions: [
                 'Set an adjustable bench to an incline of 30-45 degrees. Sit down with a dumbbell in each hand resting on your thighs.',
                 'Kick your knees up one at a time to help lift the dumbbells to your shoulders.',
@@ -242,7 +242,7 @@ export const EXERCISES = {
         {
             name: 'Dips (Chest Focus)',
             sets: 3, reps: '8-12', rest: '75s',
-            image: '/assets/chest_dips_hd.png',
+            image: '/assets/chest_dips.png',
             instructions: [
                 'Mount the dip bars with your arms fully extended and your body supported.',
                 'Lean your torso forward about 30 degrees and flare your elbows out slightly to target the chest.',
@@ -254,7 +254,7 @@ export const EXERCISES = {
         {
             name: 'Decline Bench Press',
             sets: 3, reps: '10-12', rest: '75s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/machine_chest_press.png',
             instructions: [
                 'Secure your legs at the end of the decline bench and lie down.',
                 'Grip the bar slightly wider than shoulder-width and unrack it.',
@@ -314,7 +314,7 @@ export const EXERCISES = {
         {
             name: 'Landmine Press',
             sets: 3, reps: '10-12', rest: '75s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/landmine_press.png',
             instructions: [
                 'Place one end of a barbell in a landmine attachment or corner.',
                 'Stand facing the landmine and hold the other end of the bar with both hands at chest level.',
@@ -349,7 +349,7 @@ export const EXERCISES = {
         {
             name: 'Machine Chest Press',
             sets: 3, reps: '10-12', rest: '75s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/machine_chest_press.png',
             instructions: [
                 'Adjust the seat height so the handles are aligned with your mid-chest.',
                 'Sit with your back firmly against the pad and grab the handles.',
@@ -361,7 +361,7 @@ export const EXERCISES = {
         {
             name: 'Incline Hammer Press',
             sets: 3, reps: '10-12', rest: '75s',
-            image: '/assets/incline_dumbbell_press_1763936904160.png',
+            image: '/assets/landmine_press.png',
             instructions: [
                 'Lie on an incline bench holding dumbbells with a neutral grip (palms facing each other).',
                 'Press the weights straight up over your shoulders.',
@@ -383,7 +383,7 @@ export const EXERCISES = {
         {
             name: 'Svend Press',
             sets: 3, reps: '15-20', rest: '45s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/machine_chest_press.png',
             instructions: [
                 'Stand holding two weight plates pressed together between your palms at chest level.',
                 'Press the plates straight out in front of you while squeezing them together as hard as possible.',
@@ -394,7 +394,7 @@ export const EXERCISES = {
         {
             name: 'Close Grip Bench',
             sets: 3, reps: '10-12', rest: '75s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/machine_chest_press.png',
             instructions: [
                 'Lie on a flat bench and grip the bar with your hands shoulder-width apart.',
                 'Lower the bar to your lower chest, keeping your elbows tucked close to your body.',
@@ -405,7 +405,7 @@ export const EXERCISES = {
         {
             name: 'Dumbbell Pullover',
             sets: 3, reps: '12-15', rest: '60s',
-            image: '/assets/incline_dumbbell_press_1763936904160.png',
+            image: '/assets/dumbbell_pullover.png',
             instructions: [
                 'Lie perpendicular across a flat bench with only your upper back supported.',
                 'Hold a single dumbbell with both hands above your chest.',
@@ -427,7 +427,7 @@ export const EXERCISES = {
         {
             name: 'Floor Press',
             sets: 3, reps: '10-12', rest: '75s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/floor_press.png',
             instructions: [
                 'Lie flat on the floor with a barbell or dumbbells.',
                 'Lower the weight until your triceps touch the floor.',
@@ -1021,7 +1021,7 @@ export const EXERCISES = {
         {
             name: 'Landmine Press',
             sets: 3, reps: '10 each', rest: '75s',
-            image: '/assets/landmine_press_hd.png',
+            image: '/assets/landmine_press.png',
             instructions: [
                 'Stand holding the end of a landmine bar at shoulder height.',
                 'Press the bar up and forward until your arm is extended.',
@@ -1192,7 +1192,7 @@ export const EXERCISES = {
         {
             name: 'Tricep Dips',
             sets: 3, reps: '10-15', rest: '60s',
-            image: '/assets/tricep_dips_hd.png',
+            image: '/assets/tricep_dips.png',
             instructions: [
                 'Support yourself on parallel bars with arms straight.',
                 'Lower your body by bending your elbows, keeping your torso upright.',
@@ -1273,7 +1273,7 @@ export const EXERCISES = {
         {
             name: 'JM Press',
             sets: 3, reps: '8-10', rest: '75s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/machine_chest_press.png',
             instructions: [
                 'Lower the bar towards your neck/upper chest.',
                 'Allow your elbows to travel forward slightly.',
@@ -1295,7 +1295,7 @@ export const EXERCISES = {
         {
             name: 'Board Press',
             sets: 3, reps: '8-10', rest: '90s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/machine_chest_press.png',
             instructions: [
                 'Place a board or block on your chest.',
                 'Lower the bar to the board.',
@@ -1328,7 +1328,7 @@ export const EXERCISES = {
         {
             name: 'Tate Press',
             sets: 3, reps: '10-12', rest: '60s',
-            image: '/assets/incline_dumbbell_press_1763936904160.png',
+            image: '/assets/landmine_press.png',
             instructions: [
                 'Lie on a bench holding dumbbells with palms facing feet.',
                 'Lower the inner heads of the dumbbells to your chest.',
@@ -1372,7 +1372,7 @@ export const EXERCISES = {
         {
             name: 'California Press',
             sets: 3, reps: '10-12', rest: '75s',
-            image: '/assets/bench_press_illustration_1763936559519.png',
+            image: '/assets/machine_chest_press.png',
             instructions: [
                 'Lower the bar like a close grip press.',
                 'At the bottom, roll it back slightly like a skull crusher.',
@@ -1385,7 +1385,7 @@ export const EXERCISES = {
         {
             name: 'Barbell Curls',
             sets: 4, reps: '10-12', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/band_curls.png',
             instructions: [
                 'Stand tall holding a barbell with a shoulder-width underhand grip.',
                 'Keep your elbows close to your torso at all times.',
@@ -1408,7 +1408,7 @@ export const EXERCISES = {
         {
             name: 'Cable Curls',
             sets: 3, reps: '12-15', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/band_curls.png',
             instructions: [
                 'Attach a straight bar to a low pulley.',
                 'Stand up straight holding the bar with an underhand grip.',
@@ -1432,7 +1432,7 @@ export const EXERCISES = {
         {
             name: 'Preacher Curls',
             sets: 3, reps: '10-12', rest: '75s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/band_curls.png',
             instructions: [
                 'Sit at a preacher bench and place your arms over the pad.',
                 'Grip the EZ bar or dumbbells.',
@@ -1444,7 +1444,7 @@ export const EXERCISES = {
         {
             name: 'Incline Dumbbell Curls',
             sets: 3, reps: '10-12', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/band_curls.png',
             instructions: [
                 'Sit back on an incline bench (about 45 degrees).',
                 'Let your arms hang straight down behind your torso.',
@@ -1456,7 +1456,7 @@ export const EXERCISES = {
         {
             name: 'Zottman Curls',
             sets: 3, reps: '10-12', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/band_curls.png',
             instructions: [
                 'Curl the weights up with palms facing up.',
                 'At the top, rotate your wrists so palms face down.',
@@ -1468,7 +1468,7 @@ export const EXERCISES = {
         {
             name: 'Spider Curls',
             sets: 3, reps: '10-12', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/band_curls.png',
             instructions: [
                 'Lie face down on an incline bench.',
                 'Let your arms hang straight down holding a barbell or dumbbells.',
@@ -1480,7 +1480,7 @@ export const EXERCISES = {
         {
             name: 'Drag Curls',
             sets: 3, reps: '10-12', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/drag_curls.png',
             instructions: [
                 'Hold a barbell against your thighs.',
                 'Curl the bar up by dragging it along your torso.',
@@ -1492,7 +1492,7 @@ export const EXERCISES = {
         {
             name: 'Cable Hammer Curls',
             sets: 3, reps: '12-15', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/cable_hammer_curls.png',
             instructions: [
                 'Use a rope attachment on a low pulley.',
                 'Hold the rope with a neutral grip.',
@@ -1504,7 +1504,7 @@ export const EXERCISES = {
         {
             name: '21s',
             sets: 3, reps: '21', rest: '90s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/partial_reps.png',
             instructions: [
                 'Perform 7 reps from the bottom to halfway up.',
                 'Perform 7 reps from halfway to the top.',
@@ -1516,7 +1516,7 @@ export const EXERCISES = {
         {
             name: 'Reverse Curls',
             sets: 3, reps: '10-12', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/reverse_curls.png',
             instructions: [
                 'Hold a barbell with an overhand grip.',
                 'Curl the bar up towards your shoulders.',
@@ -1527,7 +1527,7 @@ export const EXERCISES = {
         {
             name: 'Cross Body Curls',
             sets: 3, reps: '10 each', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/cross_body_curls.png',
             instructions: [
                 'Hold dumbbells at your sides.',
                 'Curl one dumbbell across your body towards the opposite shoulder.',
@@ -1538,7 +1538,7 @@ export const EXERCISES = {
         {
             name: 'High Cable Curls',
             sets: 3, reps: '12-15', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/high_cable_curls.png',
             instructions: [
                 'Stand between two high pulleys holding the handles.',
                 'Curl your hands towards your ears.',
@@ -1549,7 +1549,7 @@ export const EXERCISES = {
         {
             name: 'Band Curls',
             sets: 3, reps: '15-20', rest: '45s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/band_curls.png',
             instructions: [
                 'Stand on the center of a resistance band.',
                 'Hold the ends and curl up.',
@@ -1571,7 +1571,7 @@ export const EXERCISES = {
         {
             name: 'Machine Curls',
             sets: 3, reps: '12-15', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/machine_curls.png',
             instructions: [
                 'Adjust the seat so your armpits are over the pad.',
                 'Grip the handles and curl towards you.',
@@ -1582,7 +1582,7 @@ export const EXERCISES = {
         {
             name: 'Waiter Curls',
             sets: 3, reps: '10-12', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/waiter_curls.png',
             instructions: [
                 'Hold the top of a dumbbell with both hands, palms facing up.',
                 'Curl the weight straight up.',
@@ -1593,7 +1593,7 @@ export const EXERCISES = {
         {
             name: 'Partial Reps',
             sets: 3, reps: '20-30', rest: '60s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/partial_reps.png',
             instructions: [
                 'Perform curls using only the middle range of motion.',
                 'Keep constant tension on the muscle.',
@@ -1604,7 +1604,7 @@ export const EXERCISES = {
         {
             name: 'Static Hold Curls',
             sets: 3, reps: '8+10s hold', rest: '75s',
-            image: '/assets/dumbbell_curl_illustration_1763936598010.png',
+            image: '/assets/static_hold_curls.png',
             instructions: [
                 'Perform 8 regular curls.',
                 'On the last rep, hold the weight at 90 degrees.',
@@ -1695,7 +1695,7 @@ export const EXERCISES = {
         {
             name: 'Dead Bugs',
             sets: 3, reps: '12 each', rest: '45s',
-            image: '/assets/ dead_bugs.png',
+            image: '/assets/dead_bugs.png',
             instructions: [
                 'Lie on your back with arms extended up and legs in tabletop position.',
                 'Lower your right arm behind your head and extend your left leg straight out.',
